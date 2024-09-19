@@ -19,7 +19,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
 
-        $user->assignRole('Guest');
+        $user->assignRole('Admin');
 
         return response()->json([
             'message' => 'User registered and role assigned.',
