@@ -57,6 +57,36 @@ class AdminController extends Controller
         ], 201);
     }
 
+    public function editStudent(Request $request, $id)
+    {
+        $student = Student::find($id);
+        $student->update([
+            'last_name' => $request->input('last_name', $student->last_name),
+            'second_last_name' => $request->input('second_last_name', $student->second_last_name),
+            'first_name' => $request->input('first_name', $student->first_name),
+            'second_name' => $request->input('second_name', $student->second_name),
+            'dateofbirth' => $request->input('dateofbirth', $student->dateofbirth),
+            'placeofbirth' => $request->input('placeofbirth', $student->placeofbirth),
+            'phone' => $request->input('phone', $student->phone),
+            'gender' => $request->input('gender', $student->gender),
+            'status' => $request->input('status', $student->status),
+        ]);
+
+        return response()->json([
+            'message' => 'Student updated successfully.',
+            'student' => $student
+        ], 200);
+    }
+
+    public function deleteStudent($id)
+    {
+        $student = Student::find($id);
+        $student->delete();
+        return response()->json([
+            'message' => 'Student deleted successfully.'
+        ], 200);
+    }
+
     public function registerTeacher(Request $request)
     {
         $user = User::create([

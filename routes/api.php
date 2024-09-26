@@ -4,15 +4,20 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
+//Authentication
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-
-Route::get('students', [AdminController::class, 'getStudents']);
-Route::post('register-student', [AdminController::class, 'registerStudent']);
-
 Route::middleware('auth:sanctum')->group(function(){
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('users', [AdminController::class, 'users']);
-    Route::post('register-teacher', [AdminController::class, 'registerTeacher']);
 });
+
+//Students
+Route::post('students', [AdminController::class, 'registerStudent']);
+Route::get('students', [AdminController::class, 'getStudents']);
+Route::put('students/{id}', [AdminController::class, 'editStudent']);
+Route::delete('students/{id}', [AdminController::class, 'deleteStudent']);
+
+//Teachers
+Route::post('register-teacher', [AdminController::class, 'registerTeacher']);
