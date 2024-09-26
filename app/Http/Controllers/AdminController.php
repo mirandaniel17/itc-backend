@@ -17,9 +17,15 @@ class AdminController extends Controller
     {
         $user = Auth::user();
         if ($user->hasRole('Admin')) {
-            $users = User::all();
-            return response()->json($users);
+            
         }
+    }
+
+    public function getStudents(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $students = Student::paginate($perPage);
+        return response()->json($students);
     }
 
     public function registerStudent(Request $request)
