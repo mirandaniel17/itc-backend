@@ -49,9 +49,16 @@ class AdminController extends Controller
     public function getStudents(Request $request)
     {
         $perPage = $request->input('per_page', 10);
-        $students = Student::paginate($perPage);
+        $query = $request->input('query');
+
+        if ($query) {
+            $students = Student::search($query)->paginate($perPage);
+        } else {
+            $students = Student::paginate($perPage);
+        }
         return response()->json($students);
     }
+
 
     public function getStudentById($id)
     {
