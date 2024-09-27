@@ -12,25 +12,19 @@ class Student extends Model
     protected $fillable = [
         'last_name',
         'second_last_name',
-        'first_name',
-        'second_name',
+        'name',
+        'image',
+        'ci',
+        'program_type',
+        'school_cycle',
+        'shift',
+        'parallel',
         'dateofbirth',
         'placeofbirth',
         'phone',
         'gender',
         'status',
-        'user_id'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /*public function enrollments()
-    {
-        return $this->hasMany(StudentCourseSchedule::class);
-    }*/
 
     protected $casts = [
         'dateofbirth' => 'date',

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Student;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
@@ -13,14 +14,38 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminController extends Controller
 {
-    public function users()
+    public function registerStudent(Request $request)
     {
-        $user = Auth::user();
-        if ($user->hasRole('Admin')) {
-            
-        }
-    }
+        $data = $request->only([
+            'last_name',
+            'second_last_name',
+            'name',
+            'ci',
+            'program_type',
+            'school_cycle',
+            'shift',
+            'parallel',
+            'dateofbirth',
+            'placeofbirth',
+            'phone',
+            'gender',
+            'status'
+        ]);
 
+        if ($request->hasFile('image')) 
+        {
+            $image = $request->file('image')->store('students', 'public');
+            $data['image'] = $image;
+        }
+
+        $student = Student::create($data);
+
+        return response()->json([
+            'message' => 'Student registered successfully.',
+            'student' => $student
+        ], 201);
+    }
+    
     public function getStudents(Request $request)
     {
         $perPage = $request->input('per_page', 10);
@@ -28,34 +53,15 @@ class AdminController extends Controller
         return response()->json($students);
     }
 
-    public function registerStudent(Request $request)
+    public function getStudentById($id)
     {
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-        ]);
-
-        $user->assignRole('Student');
-
-        $student = Student::create([
-            'last_name' => $request->input('last_name'),
-            'second_last_name' => $request->input('second_last_name'),
-            'first_name' => $request->input('first_name'),
-            'second_name' => $request->input('second_name'),
-            'dateofbirth' => $request->input('dateofbirth'),
-            'placeofbirth' => $request->input('placeofbirth'),
-            'phone' => $request->input('phone'),
-            'gender' => $request->input('gender'),
-            'status' => $request->input('status', true),
-            'user_id' => $user->id,
-        ]);
-
-        return response()->json([
-            'message' => 'Student registered successfully.',
-            'student' => $student
-        ], 201);
+        $student = Student::find($id);
+        if (!$student) {
+            return response()->json(['message' => 'Student not found.'], 404);
+        }
+        return response()->json($student);
     }
+
 
     public function editStudent(Request $request, $id)
     {
@@ -63,25 +69,42 @@ class AdminController extends Controller
         $student->update([
             'last_name' => $request->input('last_name', $student->last_name),
             'second_last_name' => $request->input('second_last_name', $student->second_last_name),
-            'first_name' => $request->input('first_name', $student->first_name),
-            'second_name' => $request->input('second_name', $student->second_name),
+            'name' => $request->input('name', $student->name),
+            'ci' => $request->input('ci', $student->ci),
+            'image' => $request->input('image', $student->image),
+            'program_type' => $request->input('program_type', $student->program_type),
+            'school_cycle' => $request->input('school_cycle', $student->school_cycle),
+            'shift' => $request->input('shift', $student->shift),
+            'parallel' => $request->input('parallel', $student->parallel),
             'dateofbirth' => $request->input('dateofbirth', $student->dateofbirth),
             'placeofbirth' => $request->input('placeofbirth', $student->placeofbirth),
             'phone' => $request->input('phone', $student->phone),
             'gender' => $request->input('gender', $student->gender),
             'status' => $request->input('status', $student->status),
         ]);
-
         return response()->json([
             'message' => 'Student updated successfully.',
             'student' => $student
         ], 200);
     }
 
+
     public function deleteStudent($id)
     {
         $student = Student::find($id);
+
+        if (!$student) {
+            return response()->json([
+                'message' => 'Student not found.'
+            ], 404);
+        }
+
+        if ($student->image) {
+            Storage::disk('public')->delete($student->image);
+        }
+
         $student->delete();
+
         return response()->json([
             'message' => 'Student deleted successfully.'
         ], 200);
@@ -89,14 +112,6 @@ class AdminController extends Controller
 
     public function registerTeacher(Request $request)
     {
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-        ]);
-
-        $user->assignRole('Teacher');
-
         $teacher = Teacher::create([
             'last_name' =>  $request->input('last_name'),
             'second_last_name' => $request->input('second_last_name'),

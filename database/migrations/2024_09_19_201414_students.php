@@ -13,16 +13,19 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('last_name', 100)->nullable()->default('');
             $table->string('second_last_name', 100)->nullable()->default('');
-            $table->string('first_name', 100)->nullable()->default('');
-            $table->string('second_name', 100)->nullable()->default('');
+            $table->string('name', 100)->nullable()->default('');
+            $table->string('ci', 15)->nullable()->default('');
+            $table->string('image', 255)->nullable()->default('');
+            $table->enum('program_type', ['MODULAR', 'CARRERA']);
+            $table->string('school_cycle', 50);
+            $table->enum('shift', ['MAÑANA', 'TARDE']);
+            $table->string('parallel', 10)->nullable();
             $table->date('dateofbirth');
             $table->string('placeofbirth', 200)->nullable()->default('');
             $table->string('phone', 10);
             $table->enum('gender', ['MASCULINO', 'FEMENINO', 'OTRO']);
             $table->boolean('status')->default(true);
-            $table->bigInteger('user_id')->unsigned();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

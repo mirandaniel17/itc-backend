@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')->group(function(){
 //Students
 Route::post('students', [AdminController::class, 'registerStudent']);
 Route::get('students', [AdminController::class, 'getStudents']);
+Route::get('students/{id}', [AdminController::class, 'getStudentById']);
 Route::put('students/{id}', [AdminController::class, 'editStudent']);
 Route::delete('students/{id}', [AdminController::class, 'deleteStudent']);
 

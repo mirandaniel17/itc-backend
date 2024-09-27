@@ -18,11 +18,9 @@ class AuthController extends Controller
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
         ]);
-
-        $user->assignRole('Admin');
-
+        $user->assignRole('Gerente');
         return response()->json([
-            'message' => 'User registered and role assigned.',
+            'message' => 'Usuario creado y rol asignado.',
             'user' => $user
         ], 201);
     }
