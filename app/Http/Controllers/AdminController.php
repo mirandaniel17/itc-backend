@@ -50,7 +50,6 @@ class AdminController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
-
         if ($query) {
             $students = Student::search($query)->paginate($perPage);
         } else {
@@ -115,26 +114,5 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'Student deleted successfully.'
         ], 200);
-    }
-
-    public function registerTeacher(Request $request)
-    {
-        $teacher = Teacher::create([
-            'last_name' =>  $request->input('last_name'),
-            'second_last_name' => $request->input('second_last_name'),
-            'first_name' => $request->input('first_name'),
-            'second_name' => $request->input('second_name'),
-            'dateofbirth' => $request->input('dateofbirth'),
-            'placeofbirth' => $request->input('placeofbirth'),
-            'phone' => $request->input('phone'),
-            'gender' => $request->input('gender'),
-            'specialty' => $request->input('specialty'),
-            'user_id' => $user->id,
-        ]);
-
-        return response()->json([
-            'message' => 'Teacher registered successfully.',
-            'teacher' => $teacher
-        ], 201);
     }
 }

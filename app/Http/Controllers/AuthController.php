@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -11,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(UserRequest $request)
     {
         $user = User::create([
             'name' => $request->input('name'),
@@ -25,26 +26,16 @@ class AuthController extends Controller
         ], 201);
     }
 
-
     public function login(Request $request)
     {
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response([
-                'message' => 'Invalid credentials!'
+                'message' => 'Credenciales incorrectas!'
             ], Response::HTTP_UNAUTHORIZED);
         }
-
         $user = Auth::user();
-
-        /*if (!$user->hasRole('Admin')) {
-            return response([
-                'message' => 'Unauthorized: You do not have the necessary permissions to log in.'
-            ], Response::HTTP_FORBIDDEN);
-        }*/
-
         $token = $user->createToken('token')->plainTextToken;
         $cookie = cookie('jwt', $token, 60 * 24);
-
         return response([
             'message' => $token
         ])->withCookie($cookie);
@@ -58,7 +49,6 @@ class AuthController extends Controller
     public function logout()
     {
         $cookie = Cookie::forget('jwt');
-
         return response([
             'message' => 'Success'
         ])->withCookie($cookie);

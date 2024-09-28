@@ -21,4 +21,4 @@ Route::put('students/{id}', [AdminController::class, 'editStudent']);
 Route::delete('students/{id}', [AdminController::class, 'deleteStudent']);
 
 //Teachers
-Route::post('register-teacher', [AdminController::class, 'registerTeacher']);
+Route::post('teachers', [AdminController::class, 'registerTeacher']);
