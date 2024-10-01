@@ -8,15 +8,16 @@ use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StudentRequest;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminController extends Controller
 {
-    public function registerStudent(Request $request)
+    public function registerStudent(StudentRequest $request)
     {
-        $data = $request->only([
+        $data = $request->only([    
             'last_name',
             'second_last_name',
             'name',
