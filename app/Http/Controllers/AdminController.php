@@ -70,7 +70,7 @@ class AdminController extends Controller
     }
 
 
-    public function editStudent(Request $request, $id)
+    public function editStudent(StudentRequest $request, $id)
     {
         $student = Student::find($id);
         $student->update([
