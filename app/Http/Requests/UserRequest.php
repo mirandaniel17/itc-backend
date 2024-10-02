@@ -17,8 +17,18 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string|max:255",
-            "email" => "required|email|unique:users,email",
+            "name" => [
+            'required',
+            'string',
+            'max:20',
+            'regex:/^[a-zA-Z\s]+$/'
+        ],
+        "email" => [
+            'required',
+            'email',
+            'regex:/^[a-zA-Z0-9._%+-]+@(gmail|hotmail|yahoo)\.com$/', 
+            'unique:users,email'
+        ],
             "password" => "required|min:6",
         ];
     }
