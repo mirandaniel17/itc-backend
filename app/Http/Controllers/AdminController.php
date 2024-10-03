@@ -15,6 +15,28 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminController extends Controller
 {
+    public function getUsers(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $query = $request->input('query');
+        if ($query) {
+            $users = User::where('name', 'like', "%{$query}%")->with('roles')->paginate($perPage);
+        } else {
+            $users = User::with('roles')->paginate($perPage);
+        }
+        return response()->json($users);
+    }
+
+    public function getUserById($id)
+    {
+        $user = User::with(['roles', 'permissions'])->find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+        return response()->json($user);
+    }
+
+
     public function registerStudent(StudentRequest $request)
     {
         $data = $request->only([    
