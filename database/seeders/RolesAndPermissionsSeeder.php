@@ -11,25 +11,19 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
-       $permissions = [
-            'FullAccess',
-            'ManageCourses',
-            'ManageUsers',
-            'Enrollments',
-            'StudentInquiries',
-            'ViewSchedules',
-        ];
+        Permission::create(['name' => 'Gestión de Cursos', 'guard_name' => 'api']);
+        Permission::create(['name' => 'Gestión de Usuarios', 'guard_name' => 'api']);
+        Permission::create(['name' => 'Inscripciones', 'guard_name' => 'api']);
+        Permission::create(['name' => 'Consultar Estudiantes', 'guard_name' => 'api']);
+        Permission::create(['name' => 'Ver Horarios', 'guard_name' => 'api']);
 
-        foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
-        }
+        $managerRole = Role::create(['name' => 'Gerente', 'guard_name' => 'api']);
+        $managerRole->givePermissionTo(Permission::all());
 
-        $managerRole = Role::create(['name' => 'Gerente']);
-        $administrativeRole = Role::create(['name' => 'Administrativo']);
-        $secretaryRole = Role::create(['name' => 'Secretaria']);
-
-        $managerRole->syncPermissions(['FullAccess', 'ManageCourses', 'ManageUsers', 'Enrollments', 'StudentInquiries']);
-        $administrativeRole->syncPermissions(['ManageCourses', 'StudentInquiries', 'ViewSchedules']);
-        $secretaryRole->syncPermissions(['Enrollments', 'StudentInquiries', 'ViewSchedules']);
+        $administrativeRole = Role::create(['name' => 'Administrativo', 'guard_name' => 'api'])
+            ->givePermissionTo(['Gestión de Cursos', 'Consultar Estudiantes', 'Ver Horarios']);
+        
+        $secretaryRole = Role::create(['name' => 'Secretaria', 'guard_name' => 'api'])
+            ->givePermissionTo(['Inscripciones', 'Consultar Estudiantes', 'Ver Horarios']);
     }
 }

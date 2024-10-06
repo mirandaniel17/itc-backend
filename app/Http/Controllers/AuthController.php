@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Spatie\Permission\Models\Permission;
 
 class AuthController extends Controller
 {
@@ -20,6 +21,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
         $user->assignRole('Gerente');
+        $user->givePermissionTo(Permission::all());
         return response()->json([
             'message' => 'Usuario creado y rol asignado.',
             'user' => $user

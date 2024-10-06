@@ -26,7 +26,7 @@ class UserRequest extends FormRequest
         "email" => [
             'required',
             'email',
-            'regex:/^[a-zA-Z0-9._%+-]+@(gmail|hotmail|yahoo)\.com$/', 
+            'regex:/^[a-zA-Z0-9._%+-]+@(gmail|hotmail|yahoo|outlook)\.com$/', 
             'unique:users,email'
         ],
             "password" => "required|min:6",
