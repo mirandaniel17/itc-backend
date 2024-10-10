@@ -4,30 +4,42 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Teacher extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
      protected $fillable = [
         'last_name',
         'second_last_name',
-        'first_name',
-        'second_name',
+        'name',
         'dateofbirth',
         'placeofbirth',
         'phone',
         'gender',
         'specialty',
-        'user_id'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     protected $casts = [
         'dateofbirth' => 'date',
     ];
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            'last_name' => $this->last_name,
+            'second_last_name' => $this->second_last_name,
+            'name' => $this->name,
+            'placeofbirth' => $this->ci,
+            'phone' => $this->phone,
+            'gender' => $this->gender,
+            'specialty' => $this->specialty,
+        ];
+    }
 }

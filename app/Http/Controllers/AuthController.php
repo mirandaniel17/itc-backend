@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
-use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Spatie\Permission\Models\Permission;
 
@@ -21,11 +21,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
         $user->assignRole('Gerente');
-        $user->givePermissionTo(Permission::all());
         return response()->json([
-            'message' => 'Usuario creado y rol asignado.',
+            'message' => 'User registered successfully.',
             'user' => $user
-        ], 201);
+        ], Response::HTTP_CREATED);
     }
 
     public function login(Request $request)
@@ -64,10 +63,9 @@ class AuthController extends Controller
         ])->withCookie($cookie);
     }
 
-
     public function user()
     {
-        return response()->json(auth()->user());
+        return response()->json(auth()->user(), Response::HTTP_OK);
     }
 
     public function logout()
@@ -76,6 +74,6 @@ class AuthController extends Controller
         $cookie = Cookie::forget('jwt');
         return response()->json([
             'message' => 'Cierre de sesión exitoso.'
-        ])->withCookie($cookie);
+        ], Response::HTTP_OK)->withCookie($cookie);
     }
 }

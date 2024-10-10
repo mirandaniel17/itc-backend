@@ -31,7 +31,7 @@ class RolesPermissionsController extends Controller
         $user = User::findOrFail($userId);
         $permissions = $request->input('permissions', []);
         $user->syncPermissions($permissions);
-        return response()->json(['message' => 'Permisos actualizados con éxito.']);
+        return response()->json(['message' => 'Permissions updated successfully.']);
     }
 
     public function getUserRole($userId)
@@ -49,10 +49,10 @@ class RolesPermissionsController extends Controller
         $user = User::findOrFail($userId);
         $role = $request->input('role');
         if (!Role::where('name', $role)->exists()) {
-            return response()->json(['error' => 'El rol no existe.'], Response::HTTP_BAD_REQUEST);
+            return response()->json(['error' => 'Role does not exist.'], Response::HTTP_BAD_REQUEST);
         }
         $user->syncRoles([$role]);
-        return response()->json(['message' => 'Rol actualizado con éxito.']);
+        return response()->json(['message' => 'Role updated successfully.']);
     }
 
     public function getAllRoles()
