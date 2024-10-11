@@ -6,7 +6,7 @@ use App\Http\Controllers\RolesPermissionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\ModuleController;
+use App\Http\Controllers\ModalityController;
 use App\Http\Controllers\CourseController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,12 +47,12 @@ Route::middleware('auth:api')->group(function () {
         Route::put('teachers/{id}', [TeacherController::class, 'editTeacher']);
         Route::delete('teachers/{id}', [TeacherController::class, 'deleteTeacher']);
 
-        //Modules
-        Route::get('modules', [ModuleController::class, 'getModules']);
-        Route::get('modules/{id}', [ModuleController::class, 'getModuleById']);
-        Route::post('modules', [ModuleController::class, 'registerModule']);
-        Route::put('modules/{id}', [ModuleController::class, 'editModule']);
-        Route::delete('modules/{id}', [ModuleController::class, 'deleteModule']);
+        //Modalities
+        Route::get('modalities', [ModalityController::class, 'getModalities']);
+        Route::get('modalities/{id}', [ModalityController::class, 'getModalityById']);
+        Route::post('modalities', [ModalityController::class, 'registerModality']);
+        Route::put('modalities/{id}', [ModalityController::class, 'editModality']);
+        Route::delete('modalities/{id}', [ModalityController::class, 'deleteModality']);
 
         //Courses
         Route::get('courses', [CourseController::class, 'getCourses']);
