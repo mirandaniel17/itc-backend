@@ -10,10 +10,11 @@ class Teacher extends Model
 {
     use HasFactory, Searchable;
 
-     protected $fillable = [
+    protected $fillable = [
         'last_name',
         'second_last_name',
         'name',
+        'ci',
         'dateofbirth',
         'placeofbirth',
         'phone',
@@ -36,7 +37,7 @@ class Teacher extends Model
             'last_name' => $this->last_name,
             'second_last_name' => $this->second_last_name,
             'name' => $this->name,
-            'placeofbirth' => $this->ci,
+            'placeofbirth' => $this->placeofbirth,
             'phone' => $this->phone,
             'gender' => $this->gender,
             'specialty' => $this->specialty,

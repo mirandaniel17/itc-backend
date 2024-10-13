@@ -14,12 +14,8 @@ class Student extends Model
         'last_name',
         'second_last_name',
         'name',
-        'image',
         'ci',
-        'program_type',
-        'school_cycle',
-        'shift',
-        'parallel',
+        'image',
         'dateofbirth',
         'placeofbirth',
         'phone',
@@ -39,13 +35,8 @@ class Student extends Model
             'second_last_name' => $this->second_last_name,
             'name' => $this->name,
             'ci' => $this->ci,
-            'program_type' => $this->program_type,
-            'school_cycle' => $this->school_cycle,
-            'shift' => $this->shift,
-            'parallel' => $this->parallel,
             'placeofbirth' => $this->placeofbirth,
             'phone' => $this->phone,
-            'gender' => $this->gender,
         ];
     }
 }

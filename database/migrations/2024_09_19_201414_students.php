@@ -11,15 +11,11 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
-            $table->string('last_name', 100)->nullable();
-            $table->string('second_last_name', 100)->nullable();
-            $table->string('name', 100)->nullable();
+            $table->string('last_name', 100);
+            $table->string('second_last_name', 100);
+            $table->string('name', 100);
             $table->string('ci', 15)->nullable();
             $table->string('image', 255)->nullable();
-            $table->enum('program_type', ['MODULAR', 'CARRERA']);
-            $table->string('school_cycle', 50);
-            $table->enum('shift', ['MAÑANA', 'TARDE']);
-            $table->string('parallel', 10)->nullable();
             $table->date('dateofbirth');
             $table->string('placeofbirth', 200)->nullable();
             $table->string('phone', 10);

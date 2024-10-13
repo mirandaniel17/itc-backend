@@ -43,6 +43,6 @@ class TeacherController extends Controller
     {
         $teacher = Teacher::findOrFail($id);
         $teacher->delete();
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(Response::HTTP_OK);
     }
 }

@@ -4,16 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 
 class Course extends Model
 {
-    use HasFactory;
+    use HasFactory, Searchable;
 
     protected $fillable = [
-        'name', 
+        'name',
         'description', 
-        'start_date', 
-        'end_date', 
+        'start_date',
+        'end_date',
         'teacher_id', 
         'modality_id'
     ];
@@ -26,5 +27,12 @@ class Course extends Model
     public function modality()
     {
         return $this->belongsTo(Modality::class);
+    }
+
+    public function toSearchableArray()
+    {
+        return [
+            'name' => $this->name,
+        ];
     }
 }

@@ -3,13 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Models\Modality;
 
 class ModalityController extends Controller
 {
-    public function getModalities()
+    public function getModalities(Request $request)
     {
-        $modalities = Modality::all();
+        $perPage = $request->input('per_page', 10);
+        $query = $request->input('query');
+        if ($query) {
+            $modalities = Modality::search($query)->paginate($perPage);
+        } else {
+            $modalities = Modality::paginate($perPage);
+        }
         return response()->json($modalities, Response::HTTP_OK);
     }
 
@@ -36,6 +43,6 @@ class ModalityController extends Controller
     {
         $modality = Modality::findOrFail($id);
         $modality->delete();
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json(Response::HTTP_OK);
     }
 }

@@ -8,11 +8,18 @@ use App\Models\Course;
 
 class CourseController extends Controller
 {
-    public function getCourses()
+    public function getCourses(Request $request)
     {
-        $courses = Course::all();
+        $perPage = $request->input('per_page', 10);
+        $query = $request->input('query');
+        if ($query) {
+            $courses = Course::with(['teacher', 'modality'])->search($query)->paginate($perPage);
+        } else {
+            $courses = Course::with(['teacher', 'modality'])->paginate($perPage);
+        }
         return response()->json($courses, Response::HTTP_OK);
     }
+
 
     public function registerCourse(Request $request)
     {
@@ -37,6 +44,6 @@ class CourseController extends Controller
     {
         $course = Course::findOrFail($id);
         $course->delete();
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        return response()->json($course, Response::HTTP_OK);
     }
 }

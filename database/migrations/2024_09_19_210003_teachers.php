@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('last_name', 100)->nullable();
             $table->string('second_last_name', 100)->nullable();
             $table->string('name', 100)->nullable();
+            $table->string('ci', 15)->nullable();
             $table->date('dateofbirth');
             $table->string('placeofbirth', 200)->nullable();
             $table->string('phone', 10);
