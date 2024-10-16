@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Course;
+use App\Http\Requests\CourseRequest;
 
 class CourseController extends Controller
 {
@@ -21,7 +22,7 @@ class CourseController extends Controller
     }
 
 
-    public function registerCourse(Request $request)
+    public function registerCourse(CourseRequest $request)
     {
         $course = Course::create($request->all());
         return response()->json($course, Response::HTTP_CREATED);
@@ -33,7 +34,7 @@ class CourseController extends Controller
         return response()->json($course, Response::HTTP_OK);
     }
 
-    public function editCourse(Request $request, $id)
+    public function editCourse(CourseRequest $request, $id)
     {
         $course = Course::findOrFail($id);
         $course->update($request->all());

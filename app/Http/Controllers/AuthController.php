@@ -65,8 +65,24 @@ class AuthController extends Controller
 
     public function user()
     {
-        return response()->json(auth()->user(), Response::HTTP_OK);
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Usuario no autenticado.'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+        $roles = $user->getRoleNames();
+        $permissions = $user->getAllPermissions()->pluck('name');
+        $userAgent = request()->header('User-Agent');
+        return response()->json([
+            'user' => $user,
+            'roles' => $roles,
+            'permissions' => $permissions,
+            'userAgent' => $userAgent
+        ], Response::HTTP_OK);
     }
+
 
     public function logout()
     {

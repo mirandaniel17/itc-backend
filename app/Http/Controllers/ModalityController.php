@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Modality;
+use App\Http\Requests\ModalityRequest;
 
 class ModalityController extends Controller
 {
@@ -20,7 +21,7 @@ class ModalityController extends Controller
         return response()->json($modalities, Response::HTTP_OK);
     }
 
-    public function registerModality(Request $request)
+    public function registerModality(ModalityRequest $request)
     {
         $modality = Modality::create($request->all());
         return response()->json($modality, Response::HTTP_CREATED);

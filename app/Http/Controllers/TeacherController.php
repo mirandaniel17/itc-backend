@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Teacher;
+use App\Http\Requests\TeacherRequest;
 
 class TeacherController extends Controller
 {
@@ -20,7 +21,7 @@ class TeacherController extends Controller
         return response()->json($teachers, Response::HTTP_OK);
     }
 
-     public function registerTeacher(Request $request)
+     public function registerTeacher(TeacherRequest $request)
     {
         $teacher = Teacher::create($request->all());
         return response()->json($teacher, Response::HTTP_CREATED);
@@ -32,7 +33,7 @@ class TeacherController extends Controller
         return response()->json($teacher, Response::HTTP_OK);
     }
 
-    public function editTeacher(Request $request, $id)
+    public function editTeacher(TeacherRequest $request, $id)
     {
         $teacher = Teacher::findOrFail($id);
         $teacher->update($request->all());
