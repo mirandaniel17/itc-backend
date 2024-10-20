@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cookie;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class AuthController extends Controller
 {
@@ -20,12 +22,25 @@ class AuthController extends Controller
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
         ]);
+
         $user->assignRole('Gerente');
-        return response()->json([
-            'message' => 'User registered successfully.',
-            'user' => $user
-        ], Response::HTTP_CREATED);
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            [
+                'id' => $user->id,
+                'hash' => sha1($user->email),
+            ]
+        );
+
+        Mail::raw("Verifica tu correo electrónico haciendo clic en el siguiente enlace: $verificationUrl", function ($message) use ($user) {
+            $message->to($user->email)->subject('Verificación de correo electrónico');
+        });
+
+        return response()->json(['message' => 'Registro exitoso. Por favor, verifica tu correo electrónico.'], 201);
     }
+
 
     public function login(Request $request)
     {
@@ -37,21 +52,27 @@ class AuthController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        if (!$user->email_verified_at) {
+            return response()->json([
+                'message' => 'Debes verificar tu correo electrónico antes de iniciar sesión.'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
         if (!Hash::check($request->password, $user->password)) {
             return response()->json([
                 'message' => 'La contraseña es incorrecta.'
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        $token = JWTAuth::attempt($request->only('email', 'password'));
+        $rememberMe = $request->has('remember') && $request->remember == true;
+
+        $token = JWTAuth::attempt($request->only('email', 'password'), $rememberMe);
 
         if (!$token) {
             return response()->json([
                 'message' => 'Las credenciales no son válidas.'
             ], Response::HTTP_UNAUTHORIZED);
         }
-
-        $rememberMe = $request->has('remember') && $request->remember == true;
 
         $cookieExpirationTime = $rememberMe ? 60 * 24 * 7 : 60 * 24;
 
@@ -62,6 +83,7 @@ class AuthController extends Controller
             'token' => $token
         ])->withCookie($cookie);
     }
+
 
     public function user()
     {
