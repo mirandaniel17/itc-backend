@@ -12,6 +12,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Password;
+use App\Mail\VerifyEmailMail;
 
 class AuthController extends Controller
 {
@@ -34,9 +36,7 @@ class AuthController extends Controller
             ]
         );
 
-        Mail::raw("Verifica tu correo electrónico haciendo clic en el siguiente enlace: $verificationUrl", function ($message) use ($user) {
-            $message->to($user->email)->subject('Verificación de correo electrónico');
-        });
+        Mail::to($user->email)->send(new VerifyEmailMail($verificationUrl));
 
         return response()->json(['message' => 'Registro exitoso. Por favor, verifica tu correo electrónico.'], 201);
     }
@@ -114,4 +114,7 @@ class AuthController extends Controller
             'message' => 'Cierre de sesión exitoso.'
         ], Response::HTTP_OK)->withCookie($cookie);
     }
+
+    
+
 }

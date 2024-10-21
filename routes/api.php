@@ -11,6 +11,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ModalityController;
 use App\Http\Controllers\CourseController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PasswordResetController;
 use Illuminate\Http\Request;
 
 Route::get('/email/verify', [EmailVerificationController::class, 'showNotice'])->name('verification.notice');
@@ -29,6 +30,13 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) 
 
 
 Route::post('/email/resend', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware(['auth:api', 'throttle:6,1'])->name('verification.resend');
+
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::get('/reset-password/{token}', function ($token) {
+    return redirect("http://localhost:5173/reset-password/{$token}");
+})->name('password.reset');
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
