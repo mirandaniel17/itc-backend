@@ -12,6 +12,9 @@ use App\Http\Controllers\ModalityController;
 use App\Http\Controllers\CourseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\ShiftController;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\RoomController;
 use Illuminate\Http\Request;
 
 Route::get('/email/verify', [EmailVerificationController::class, 'showNotice'])->name('verification.notice');
@@ -82,6 +85,24 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('courses', [CourseController::class, 'registerCourse']);
         Route::put('courses/{id}', [CourseController::class, 'editCourse']);
         Route::delete('courses/{id}', [CourseController::class, 'deleteCourse']);
+
+        Route::get('/shifts', [ShiftController::class, 'index']);
+        Route::get('/shifts/{id}', [ShiftController::class, 'show']);
+        Route::post('/shifts', [ShiftController::class, 'store']);
+        Route::put('/shifts/{id}', [ShiftController::class, 'update']);
+        Route::delete('/shifts/{id}', [ShiftController::class, 'destroy']);
+
+        Route::get('/discounts', [DiscountController::class, 'index']);
+        Route::get('/discounts/{id}', [DiscountController::class, 'show']);
+        Route::post('/discounts', [DiscountController::class, 'store']);
+        Route::put('/discounts/{id}', [DiscountController::class, 'update']);
+        Route::delete('/discounts/{id}', [DiscountController::class, 'destroy']);
+
+        Route::get('/rooms', [RoomController::class, 'index']);
+        Route::post('/rooms', [RoomController::class, 'store']);
+        Route::get('/rooms/{id}', [RoomController::class, 'show']);
+        Route::put('/rooms/{id}', [RoomController::class, 'update']);
+        Route::delete('/rooms/{id}', [RoomController::class, 'destroy']);
     });
 
     Route::group(['middleware' => ['permission:Inscripciones']], function () {
