@@ -74,13 +74,14 @@ class AuthController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
+
         $cookieExpirationTime = $rememberMe ? 60 * 24 * 7 : 60 * 24;
 
         $cookie = cookie('jwt', $token, $cookieExpirationTime);
 
         return response()->json([
             'message' => 'Inicio de sesión exitoso.',
-            'token' => $token
+            'token' => $token,
         ])->withCookie($cookie);
     }
 
