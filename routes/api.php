@@ -15,6 +15,7 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\RoomController;
+use App\Http\Controllers\EnrollmentController;
 use Illuminate\Http\Request;
 
 Route::get('/email/verify', [EmailVerificationController::class, 'showNotice'])->name('verification.notice');
@@ -106,6 +107,11 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     });
 
     Route::group(['middleware' => ['permission:Inscripciones']], function () {
-        // Rutas de inscripciones
+        Route::get('enrollments', [EnrollmentController::class, 'getEnrollments']);
+        Route::get('enrollments/{id}', [EnrollmentController::class, 'getEnrollmentById']);
+        Route::post('enrollments', [EnrollmentController::class, 'registerEnrollment']);
+        Route::put('enrollments/{id}', [EnrollmentController::class, 'editEnrollment']);
+        Route::delete('enrollments/{id}', [EnrollmentController::class, 'deleteEnrollment']);
     });
 });
+

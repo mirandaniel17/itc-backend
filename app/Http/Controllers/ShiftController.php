@@ -6,18 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Shift;
 use App\Models\Room;
 use Illuminate\Http\Response;
+use App\Http\Requests\ShiftRequest;
 
 class ShiftController extends Controller
 {
-    public function store(Request $request)
+    public function store(ShiftRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:50',
-            'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
-            'room_id' => 'required|exists:rooms,id',
-        ]);
-
         $shift = Shift::create([
             'name' => $request->name,
             'start_time' => $request->start_time,
@@ -50,7 +44,7 @@ class ShiftController extends Controller
         return response()->json($shift, Response::HTTP_OK);
     }
 
-    public function update(Request $request, $id)
+    public function update(ShiftRequest $request, $id)
     {
         $shift = Shift::findOrFail($id);
 

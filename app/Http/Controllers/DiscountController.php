@@ -5,16 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Discount;
 use Illuminate\Http\Response;
+use App\Http\Requests\DiscountRequest;
 
 class DiscountController extends Controller
 {
-    public function store(Request $request)
+    public function store(DiscountRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'percentage' => 'required|numeric|min:0|max:100',
-        ]);
-
         $discount = Discount::create([
             'name' => $request->name,
             'percentage' => $request->percentage,
@@ -45,7 +41,7 @@ class DiscountController extends Controller
         return response()->json($discount, Response::HTTP_OK);
     }
 
-    public function update(Request $request, $id)
+    public function update(DiscountRequest $request, $id)
     {
         $discount = Discount::findOrFail($id);
 

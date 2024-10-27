@@ -18,7 +18,7 @@ class CourseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|regex:/^[A-Z]/',
             'description' => 'required|string',
             'start_date' => 'required|date|before:end_date', 
             'end_date' => [
