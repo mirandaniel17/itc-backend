@@ -74,6 +74,7 @@ class AuthController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
+        $permissions = $user->getAllPermissions()->pluck('name');
 
         $cookieExpirationTime = $rememberMe ? 60 * 24 * 7 : 60 * 24;
 
@@ -82,6 +83,11 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Inicio de sesión exitoso.',
             'token' => $token,
+            'permissions' => $permissions,
+                'user' => [
+                'name' => $user->name,
+                'email' => $user->email,
+            ]
         ])->withCookie($cookie);
     }
 
