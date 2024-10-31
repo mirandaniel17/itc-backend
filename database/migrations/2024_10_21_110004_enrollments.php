@@ -12,7 +12,6 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->bigInteger('student_id')->unsigned();
-            $table->bigInteger('shift_id')->unsigned();
             $table->bigInteger('course_id')->unsigned();
             $table->bigInteger('discount_id')->unsigned()->nullable();
             $table->string('document_1')->nullable();
@@ -20,7 +19,6 @@ return new class extends Migration
             $table->date('enrollment_date');
             $table->timestamps();
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
-            $table->foreign('shift_id')->references('id')->on('shifts')->onDelete('cascade');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('set null');
         });

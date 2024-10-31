@@ -11,7 +11,6 @@ class Enrollment extends Model
 
     protected $fillable = [
         'student_id',
-        'shift_id',
         'course_id',
         'discount_id',
         'document_1',
@@ -22,11 +21,6 @@ class Enrollment extends Model
     public function student()
     {
         return $this->belongsTo(Student::class);
-    }
-
-    public function shift()
-    {
-        return $this->belongsTo(Shift::class);
     }
 
     public function course()

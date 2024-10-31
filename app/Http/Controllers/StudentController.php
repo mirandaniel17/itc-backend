@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Student;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StudentRequest;
+use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
@@ -62,29 +63,30 @@ class StudentController extends Controller
     public function editStudent(StudentRequest $request, $id)
     {
         $student = Student::find($id);
-        
+
         if (!$student) {
             return response()->json(['message' => 'Student not found.'], Response::HTTP_NOT_FOUND);
         }
 
-        $student->update([
-            'last_name' => $request->input('last_name', $student->last_name),
-            'second_last_name' => $request->input('second_last_name', $student->second_last_name),
-            'name' => $request->input('name', $student->name),
-            'ci' => $request->input('ci', $student->ci),
-            'image' => $request->input('image', $student->image),
-            'dateofbirth' => $request->input('dateofbirth', $student->dateofbirth),
-            'placeofbirth' => $request->input('placeofbirth', $student->placeofbirth),
-            'phone' => $request->input('phone', $student->phone),
-            'gender' => $request->input('gender', $student->gender),
-            'status' => $request->input('status', $student->status),
-        ]);
+        $data = $request->all();
+        Log::info($data);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image')->store('students', 'public');
+            $data['image'] = $image;
+            if ($student->image) {
+                Storage::disk('public')->delete($student->image);
+            }
+        }
+
+        $student->update($data);
 
         return response()->json([
             'message' => 'Student updated successfully.',
             'student' => $student
         ], Response::HTTP_OK);
     }
+
 
     public function deleteStudent($id)
     {

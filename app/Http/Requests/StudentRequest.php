@@ -29,7 +29,7 @@ class StudentRequest extends FormRequest
         ],
         'phone' => 'required|digits_between:8,15|regex:/^[76][0-9]{7}$/',
         'gender' => 'required|in:MASCULINO,FEMENINO,OTRO',
-        'image' => 'required|mimes:jpg,jpeg,png,bmp',
+        'image' => 'nullable|mimes:jpg,jpeg,png,bmp',
         'dateofbirth' => 'required|date|before_or_equal:' . now()->subYears(12)->format('Y-m-d'),
     ];
    }

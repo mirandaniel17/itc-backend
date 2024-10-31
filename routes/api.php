@@ -16,6 +16,7 @@ use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\ScheduleController;
 use Illuminate\Http\Request;
 
 Route::get('/email/verify', [EmailVerificationController::class, 'showNotice'])->name('verification.notice');
@@ -112,6 +113,10 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('enrollments', [EnrollmentController::class, 'registerEnrollment']);
         Route::put('enrollments/{id}', [EnrollmentController::class, 'editEnrollment']);
         Route::delete('enrollments/{id}', [EnrollmentController::class, 'deleteEnrollment']);
+
+        Route::post('/schedules', [ScheduleController::class, 'store']);
+        Route::get('/schedules', [ScheduleController::class, 'index']);
+        Route::get('/course-schedules', [ScheduleController::class, 'getCourseSchedules']);
     });
 });
 
