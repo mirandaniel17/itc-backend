@@ -23,8 +23,7 @@ class StudentRequest extends FormRequest
         'name' => 'required|string|max:255|regex:/^[A-Z]/',
         'ci' => [
             'required',
-            'digits:8',
-            'regex:/^[0-9]{8}$/',
+            'digits_between:7,9',
             Rule::unique('students', 'ci')->ignore($studentId),
         ],
         'phone' => 'required|digits_between:8,15|regex:/^[76][0-9]{7}$/',

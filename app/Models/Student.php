@@ -28,6 +28,11 @@ class Student extends Model
         'status' => 'boolean',
     ];
 
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
     public function toSearchableArray()
     {
         return [

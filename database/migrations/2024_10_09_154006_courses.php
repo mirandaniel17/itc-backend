@@ -12,6 +12,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->bigIncrements('id');
             $table->string('name', 100);
+            $table->string('parallel', 100);
             $table->text('description')->nullable();
             $table->date('start_date');
             $table->date('end_date')->nullable();

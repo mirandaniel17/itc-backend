@@ -17,7 +17,12 @@ class DiscountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:100',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[a-zA-Z\s]+$/',
+            ],
             'percentage' => 'required|numeric|min:0|max:100',
         ];
     }

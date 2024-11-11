@@ -14,15 +14,46 @@ class ShiftRequest extends FormRequest
         return true;
     }
 
-    public function rules(): array
+   public function rules(): array
     {
+        \Log::info('Start Time: ' . $this->input('start_time'));
+        \Log::info('End Time: ' . $this->input('end_time'));
+
         return [
-            'name' => 'required|string|max:50',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[a-zA-ZÀ-ÿ\s]+$/u',
+            ],
             'start_time' => 'required|date_format:H:i',
-            'end_time' => 'required|date_format:H:i|after:start_time',
+            'end_time' => [
+                'required',
+                'date_format:H:i',
+                'after:start_time',
+                function ($attribute, $value, $fail) {
+                    $startTime = \Carbon\Carbon::createFromFormat('H:i', $this->input('start_time'))->setDate(2024, 1, 1);
+                    $endTime = \Carbon\Carbon::createFromFormat('H:i', $value)->setDate(2024, 1, 1);
+
+                    if ($endTime->lt($startTime)) {
+                        $endTime->addDay();
+                    }
+
+                    $diffInMinutes = $startTime->diffInMinutes($endTime);
+
+                    \Log::info('Diferencia en minutos ajustada: ' . $diffInMinutes);
+
+                    if ($diffInMinutes < 60) {
+                        $fail('La diferencia entre la hora inicial y la final debe ser de al menos 1 hora.');
+                    }
+                },
+            ],
+
             'room_id' => 'required|exists:rooms,id',
         ];
     }
+
+
 
     protected function failedValidation(Validator $validator)
     {

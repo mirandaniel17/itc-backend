@@ -25,8 +25,6 @@ class AuthController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
 
-        $user->assignRole('Gerente');
-
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(60),
@@ -110,6 +108,26 @@ class AuthController extends Controller
             'permissions' => $permissions,
             'userAgent' => $userAgent
         ], Response::HTTP_OK);
+    }
+
+    public function updateUserProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        if (!Hash::check($request->input('currentPassword'), $user->password)) {
+            return response()->json(['error' => 'La contraseña actual no es correcta.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+
+        if ($request->filled('newPassword')) {
+            $user->password = Hash::make($request->input('newPassword'));
+        }
+
+        $user->save();
+
+        return response()->json(['message' => 'Perfil actualizado con éxito.', 'user' => $user], Response::HTTP_OK);
     }
 
 

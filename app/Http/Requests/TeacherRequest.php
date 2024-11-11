@@ -25,9 +25,8 @@ class TeacherRequest extends FormRequest
             'name' => 'required|string|max:255|regex:/^[A-Z]/',
             'ci' => [
                 'required',
-                'digits:8',
-                'regex:/^[0-9]{8}$/',
-                Rule::unique('teachers', 'ci')->ignore($teacherId), 
+                'digits_between:7,9',
+                Rule::unique('teachers', 'ci')->ignore($teacherId),
             ],
             'dateofbirth' => [
                 'required',

@@ -8,9 +8,15 @@ use Illuminate\Http\Response;
 
 class RoomController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $rooms = Room::all();
+        $perPage = $request->input('per_page', 10);
+        $query = $request->input('query');
+        if ($query) {
+            $rooms = Room::search($query)->paginate($perPage);
+        } else {
+            $rooms = Room::paginate($perPage);
+        }
         return response()->json($rooms, Response::HTTP_OK);
     }
 

@@ -13,13 +13,18 @@ class CourseController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
+
         if ($query) {
-            $courses = Course::with(['teacher', 'modality'])->search($query)->paginate($perPage);
+            $courses = Course::search($query)->query(function ($builder) {
+                $builder->with(['teacher', 'modality']);
+            })->paginate($perPage);
         } else {
             $courses = Course::with(['teacher', 'modality'])->paginate($perPage);
         }
+
         return response()->json($courses, Response::HTTP_OK);
     }
+
 
     public function registerCourse(CourseRequest $request)
     {

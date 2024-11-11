@@ -122,7 +122,7 @@ return [
     'prohibited_if'        => 'El campo :attribute está prohibido cuando :other es :value.',
     'prohibited_unless'    => 'El campo :attribute está prohibido a menos que :other sea :values.',
     'prohibits'            => 'El campo :attribute prohibe que :other esté presente.',
-    'regex'                => 'El formato del campo :attribute no es válido. Debe empezar por mayúscula.',
+    'regex'                => 'El formato del campo :attribute no es válido.',
     'required'             => 'El campo :attribute es obligatorio.',
     'required_array_keys'  => 'El campo :attribute debe contener entradas para: :values.',
     'required_if'          => 'El campo :attribute es obligatorio cuando :other es :value.',

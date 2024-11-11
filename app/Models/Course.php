@@ -12,6 +12,7 @@ class Course extends Model
 
     protected $fillable = [
         'name',
+        'parallel',
         'description', 
         'start_date',
         'end_date',
@@ -27,6 +28,16 @@ class Course extends Model
     public function modality()
     {
         return $this->belongsTo(Modality::class);
+    }
+
+    public function schedules()
+    {
+        return $this->hasMany(CourseSchedule::class);
+    }
+
+    public function courseSchedules()
+    {
+        return $this->hasMany(CourseSchedule::class);
     }
 
     public function toSearchableArray()

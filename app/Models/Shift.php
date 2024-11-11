@@ -23,6 +23,18 @@ class Shift extends Model
         return $this->belongsTo(Room::class);
     }
 
+    public function schedules()
+    {
+        return $this->hasMany(CourseSchedule::class);
+    }
+
+    public function courseSchedules()
+    {
+        return $this->hasMany(CourseSchedule::class);
+    }
+
+
+
     public function toSearchableArray()
     {
         return [

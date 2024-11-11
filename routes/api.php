@@ -17,6 +17,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\AttendanceController;
 use Illuminate\Http\Request;
 
 Route::get('/email/verify', [EmailVerificationController::class, 'showNotice'])->name('verification.notice');
@@ -49,9 +50,9 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
     Route::get('dashboard/counts', [DashboardController::class, 'getCounts']);
     Route::get('user', [AuthController::class, 'user']);
+    Route::put('/user/update', [AuthController::class, 'updateUserProfile']);
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::group(['middleware' => ['permission:Gestión de Usuarios']], function () {
         Route::get('users', [AdminController::class, 'getUsers']);
         Route::get('users/{id}', [AdminController::class, 'getUserById']);
         Route::get('/users/{id}/permissions', [RolesPermissionsController::class, 'getUserPermissions']);
@@ -59,7 +60,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('roles', [RolesPermissionsController::class, 'getAllRoles']);
         Route::get('user/{id}/role', [RolesPermissionsController::class, 'getUserRole']);
         Route::post('user/{id}/role', [RolesPermissionsController::class, 'updateUserRole']);
-    });
+        Route::get('/roles/{roleName}/permissions', [RolesPermissionsController::class, 'getRolePermissions']);
 
     Route::group(['middleware' => ['permission:Consultar Estudiantes']], function () {
         Route::get('students', [StudentController::class, 'getStudents']);
@@ -105,6 +106,12 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('/rooms/{id}', [RoomController::class, 'show']);
         Route::put('/rooms/{id}', [RoomController::class, 'update']);
         Route::delete('/rooms/{id}', [RoomController::class, 'destroy']);
+
+        Route::get('courses-attendance', [AttendanceController::class, 'index']);
+        Route::get('courses/{course_id}/attendance-dates', [AttendanceController::class, 'getAttendanceDates']);
+        Route::get('courses/{course_id}/students', [AttendanceController::class, 'getStudentsForAttendance']);
+        Route::post('attendance', [AttendanceController::class, 'storeAttendance']);
+        Route::get('/attendance-dates/{course_id}', [AttendanceController::class, 'getAttendanceDates']);
     });
 
     Route::group(['middleware' => ['permission:Inscripciones']], function () {
@@ -114,9 +121,12 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::put('enrollments/{id}', [EnrollmentController::class, 'editEnrollment']);
         Route::delete('enrollments/{id}', [EnrollmentController::class, 'deleteEnrollment']);
 
+        
+        Route::get('/schedules', [ScheduleController::class, 'getCourseSchedules']);
+        Route::get('/schedules/{id}', [ScheduleController::class, 'show']);
         Route::post('/schedules', [ScheduleController::class, 'store']);
-        Route::get('/schedules', [ScheduleController::class, 'index']);
-        Route::get('/course-schedules', [ScheduleController::class, 'getCourseSchedules']);
+        Route::put('/schedules/{id}', [ScheduleController::class, 'update']);
+
     });
 });
 
