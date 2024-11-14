@@ -13,13 +13,16 @@ class TeacherController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
+    
         if ($query) {
-            $teachers = Teacher::search($query)->paginate($perPage);
+            $teachers = Teacher::search($query)->orderBy('last_name', 'asc')->paginate($perPage);
         } else {
-            $teachers = Teacher::paginate($perPage);
+            $teachers = Teacher::orderBy('last_name', 'asc')->paginate($perPage);
         }
+    
         return response()->json($teachers, Response::HTTP_OK);
     }
+    
 
      public function registerTeacher(TeacherRequest $request)
     {

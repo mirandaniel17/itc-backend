@@ -16,13 +16,16 @@ class StudentController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
+    
         if ($query) {
-            $students = Student::search($query)->paginate($perPage);
+            $students = Student::search($query)->orderBy('last_name', 'asc')->paginate($perPage);
         } else {
-            $students = Student::paginate($perPage);
+            $students = Student::orderBy('last_name', 'asc')->paginate($perPage);
         }
+    
         return response()->json($students, Response::HTTP_OK);
     }
+    
 
     public function registerStudent(StudentRequest $request)
     {
