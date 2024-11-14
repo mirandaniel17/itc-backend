@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Course;
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Notifications\StudentAbsenceAlert;
 
 class AttendanceController extends Controller
 {
@@ -48,16 +50,14 @@ class AttendanceController extends Controller
             'attendances' => $attendances,
         ], Response::HTTP_OK);
     }
-    
 
     public function storeAttendance(Request $request)
     {
         $courseId = $request->input('course_id');
         $date = $request->input('date');
         $attendances = $request->input('attendances');
-
         foreach ($attendances as $attendance) {
-            Attendance::updateOrCreate(
+            $attendanceModel = Attendance::updateOrCreate(
                 [
                     'student_id' => $attendance['student_id'],
                     'course_id' => $courseId,
@@ -65,8 +65,20 @@ class AttendanceController extends Controller
                 ],
                 ['status' => $attendance['status']]
             );
-        }
+            if ($attendanceModel->status == 'AUSENTE') {
+                $student = Student::find($attendance['student_id']);
+                $absencesCount = Attendance::where('student_id', $student->id)
+                    ->where('status', 'AUSENTE')
+                    ->count();
 
+                if ($absencesCount >= 5) {
+                    $users = User::all();
+                    foreach ($users as $user) {
+                        $user->notify(new StudentAbsenceAlert($student));
+                    }
+                }
+            }
+        }
         return response()->json(['message' => 'Attendance saved successfully'], Response::HTTP_CREATED);
     }
 }

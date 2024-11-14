@@ -18,25 +18,25 @@ class UserRequest extends FormRequest
     {
         return [
             "name" => [
-            'required',
-            'string',
-            'max:20',
-            'regex:/^[a-zA-Z\s]+$/'
-        ],
-        "email" => [
-            'required',
-            'email',
-            'regex:/^[a-zA-Z0-9._%+-]+@(gmail|hotmail|yahoo|outlook)\.(com|es|bo)$/',
-            'not_regex:/^[-!#$%&\'*+\\/=?^_`{|}~.]/',
-            'not_regex:/[-!#$%&\'*+\\/=?^_`{|}~.]$/',
-            'unique:users,email'
-        ],
-        "password" => [
-            'required',
-            'string',
-            'min:8',
-            'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/',
-        ],
+                'required',
+                'string',
+                'max:20',
+                'regex:/^[a-zA-Z\s]+$/'
+            ],
+            "email" => [
+                'required',
+                'email',
+                'regex:/^[a-zA-Z0-9._%+-]+@(gmail|hotmail|yahoo|outlook)\.(com|es|bo)$/',
+                'not_regex:/^[-!#$%&\'*+\\/=?^_`{|}~.]/',
+                'not_regex:/[-!#$%&\'*+\\/=?^_`{|}~.]$/',
+                'unique:users,email'
+            ],
+            "password" => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/',
+            ],
         ];
     }
 

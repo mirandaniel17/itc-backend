@@ -62,10 +62,10 @@ class ScheduleController extends Controller
             ];
         });
 
-        \Log::info($schedules);
-
         return response()->json(['schedules' => $schedules]);
     }
+
+
     public function show($id)
     {
         $schedule = CourseSchedule::with(['course', 'shift'])->findOrFail($id);

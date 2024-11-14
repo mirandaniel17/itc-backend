@@ -13,7 +13,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasApiTokens, HasRoles, Searchable;
+    use HasFactory, Notifiable, HasApiTokens, HasRoles, Searchable, Notifiable;
 
     protected $guard_name = 'api';
 

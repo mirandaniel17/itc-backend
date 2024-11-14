@@ -44,10 +44,10 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'El correo electrónico ingresado no existe.'
-            ], Response::HTTP_NOT_FOUND);
+                'message' => 'Credenciales incorrectas. Vuelva a ingresar correo electrónico y/o contraseña.'
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         if (!$user->email_verified_at) {
@@ -56,19 +56,12 @@ class AuthController extends Controller
             ], Response::HTTP_FORBIDDEN);
         }
 
-        if (!Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'message' => 'La contraseña es incorrecta.'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
-
         $rememberMe = $request->has('remember') && $request->remember == true;
-
         $token = JWTAuth::attempt($request->only('email', 'password'), $rememberMe);
 
         if (!$token) {
             return response()->json([
-                'message' => 'Las credenciales no son válidas.'
+                'message' => 'Credenciales incorrectas.'
             ], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -82,12 +75,13 @@ class AuthController extends Controller
             'message' => 'Inicio de sesión exitoso.',
             'token' => $token,
             'permissions' => $permissions,
-                'user' => [
+            'user' => [
                 'name' => $user->name,
                 'email' => $user->email,
             ]
         ])->withCookie($cookie);
     }
+
 
 
     public function user()
@@ -112,23 +106,34 @@ class AuthController extends Controller
 
     public function updateUserProfile(Request $request)
     {
-        $user = auth()->user();
+        try {
+            $validated = $request->validate([
+                'name' => [
+                    'required',
+                    'string',
+                    'max:20',
+                    'regex:/^[a-zA-Z\s]+$/',
+                ],
+            ]);
 
-        if (!Hash::check($request->input('currentPassword'), $user->password)) {
-            return response()->json(['error' => 'La contraseña actual no es correcta.'], Response::HTTP_UNAUTHORIZED);
+            $user = auth()->user();
+            $user->name = $validated['name'];
+            $user->save();
+
+            return response()->json(['message' => 'Perfil actualizado con éxito.', 'user' => $user], Response::HTTP_OK);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Error de validación.',
+                'errors' => $e->errors()
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error inesperado.',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        $user->name = $request->input('name');
-        $user->email = $request->input('email');
-
-        if ($request->filled('newPassword')) {
-            $user->password = Hash::make($request->input('newPassword'));
-        }
-
-        $user->save();
-
-        return response()->json(['message' => 'Perfil actualizado con éxito.', 'user' => $user], Response::HTTP_OK);
     }
+
 
 
     public function logout()
