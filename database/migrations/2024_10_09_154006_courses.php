@@ -14,6 +14,7 @@ return new class extends Migration
             $table->string('name', 100);
             $table->string('parallel', 100);
             $table->text('description')->nullable();
+            $table->decimal('cost', 10, 2)->default(0);
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->bigInteger('teacher_id')->unsigned();

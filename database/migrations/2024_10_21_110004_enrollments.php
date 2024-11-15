@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('document_1')->nullable();
             $table->string('document_2')->nullable();
             $table->date('enrollment_date');
+            $table->enum('payment_type', ['CONTADO', 'MENSUAL']);
             $table->timestamps();
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
             $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');

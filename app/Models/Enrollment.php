@@ -15,7 +15,8 @@ class Enrollment extends Model
         'discount_id',
         'document_1',
         'document_2', 
-        'enrollment_date'
+        'enrollment_date',
+        'payment_type',
     ];
 
     public function student()
@@ -36,5 +37,20 @@ class Enrollment extends Model
     public function attendances()
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function totalPayments()
+    {
+        return $this->payments()->sum('amount');
+    }
+
+    public function isFullyPaid()
+    {
+        return $this->totalPayments() >= $this->course->cost;
     }
 }

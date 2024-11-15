@@ -142,6 +142,6 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
         Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
-        Route::middleware('auth:sanctum')->get('notifications/unread', [NotificationController::class, 'unreadCount']);
+        Route::get('notifications/unread', [NotificationController::class, 'unreadCount'])->middleware('auth:api');
     });
 });

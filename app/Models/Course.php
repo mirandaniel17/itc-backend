@@ -13,7 +13,8 @@ class Course extends Model
     protected $fillable = [
         'name',
         'parallel',
-        'description', 
+        'description',
+        'cost',
         'start_date',
         'end_date',
         'teacher_id', 
@@ -44,6 +45,7 @@ class Course extends Model
     {
         return [
             'name' => $this->name,
+            'cost' => $this->cost,
         ];
     }
 }

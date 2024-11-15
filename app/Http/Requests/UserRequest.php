@@ -20,8 +20,8 @@ class UserRequest extends FormRequest
             "name" => [
                 'required',
                 'string',
-                'max:20',
-                'regex:/^[a-zA-Z\s]+$/'
+                'max:40',
+                'regex:/^[\p{L}\s]+$/u'
             ],
             "email" => [
                 'required',

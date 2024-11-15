@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Enrollment;
 use App\Models\CourseSchedule;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\EnrollmentRequest;
 
 class EnrollmentController extends Controller
 {
@@ -14,56 +16,76 @@ class EnrollmentController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
-        $enrollments = Enrollment::with(['student', 'course'])
-            ->when($query, function ($q) use ($query) {
-                $q->whereHas('student', function ($q) use ($query) {
-                    $q->where('name', 'like', "%$query%");
-                });
-            })->paginate($perPage);
-        return response()->json($enrollments, Response::HTTP_OK);
+        $enrollments = Enrollment::with(['student', 'course', 'payments'])->when($query, function ($q) use ($query) {
+            $q->whereHas('student', function ($q) use ($query) {
+                $q->where('name', 'like', "%$query%");
+            });
+        })->get()->map(function ($enrollment) {
+            $totalPaid = $enrollment->payments->sum('amount');
+            $totalCost = $enrollment->course->cost;
+            if ($enrollment->discount) {
+                $totalCost -= ($totalCost * $enrollment->discount->percentage) / 100;
+            }
+            $enrollment->payment_status = $totalPaid >= $totalCost ? 'Pagado' : 'Pendiente';
+            return $enrollment;
+        });
+        return response()->json([
+            'data' => $enrollments->forPage($request->input('page', 1), $perPage),
+            'current_page' => $request->input('page', 1),
+            'last_page' => ceil($enrollments->count() / $perPage),
+        ], Response::HTTP_OK);
     }
 
-    public function registerEnrollment(Request $request)
+
+    public function registerEnrollment(EnrollmentRequest $request)
     {
         $data = $request->only([
             'student_id',
-            'course_id',
             'discount_id',
-            'enrollment_date'
+            'enrollment_date',
+            'payment_type',
+            'amount',
         ]);
-        if (!isset($data['course_id'])) {
-            return response()->json(['error' => 'El campo course_id es obligatorio.'], 400);
-        }
-        $selectedCourseSchedules = CourseSchedule::where('course_id', $data['course_id'])->get();
-        $existingEnrollments = Enrollment::where('student_id', $data['student_id'])->pluck('course_id');
-        $existingCourseSchedules = CourseSchedule::whereIn('course_id', $existingEnrollments)->get();
-        foreach ($selectedCourseSchedules as $selectedSchedule) {
-            foreach ($existingCourseSchedules as $existingSchedule) {
-                if ($selectedSchedule->day === $existingSchedule->day) {
-                    if ($this->hasTimeConflict($selectedSchedule, $existingSchedule)) {
-                        return response()->json([
-                            'error' => "Conflicto de horario detectado: el curso {$selectedSchedule->course->name} choca con otro curso en el día {$selectedSchedule->day} de {$selectedSchedule->shift->start_time} a {$selectedSchedule->shift->end_time}"
-                        ], 409);
-                    }
-                }
-            }
-        }
+
+        $courseIds = $request->input('course_ids', []);
 
         if ($request->hasFile('document_1')) {
-            $document1 = $request->file('document_1')->store('documents', 'public');
-            $data['document_1'] = $document1;
+            $data['document_1'] = $request->file('document_1')->store('documents', 'public');
         }
 
         if ($request->hasFile('document_2')) {
-            $document2 = $request->file('document_2')->store('documents', 'public');
-            $data['document_2'] = $document2;
+            $data['document_2'] = $request->file('document_2')->store('documents', 'public');
         }
 
-        $enrollment = Enrollment::create($data);
+        foreach ($courseIds as $courseId) {
+            $data['course_id'] = $courseId;
+
+            $enrollment = Enrollment::create($data);
+
+            $courseCost = $enrollment->course->cost;
+
+            if (!empty($data['discount_id'])) {
+                $discount = $enrollment->discount->percentage ?? 0;
+                $courseCost -= ($courseCost * $discount) / 100;
+            }
+
+            $initialAmount = $request->input('amount', 0);
+
+            if ($data['payment_type'] === 'MENSUAL' && $initialAmount <= 0) {
+                return response()->json([
+                    'message' => 'El monto inicial es requerido y debe ser mayor a 0 para pagos mensuales.',
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            Payment::create([
+                'enrollment_id' => $enrollment->id,
+                'amount' => $initialAmount,
+                'payment_date' => now(),
+            ]);
+        }
 
         return response()->json([
             'message' => 'Inscripción registrada con éxito.',
-            'enrollment' => $enrollment
         ], Response::HTTP_CREATED);
     }
 
