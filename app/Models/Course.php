@@ -36,10 +36,24 @@ class Course extends Model
         return $this->hasMany(CourseSchedule::class);
     }
 
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
     public function courseSchedules()
     {
         return $this->hasMany(CourseSchedule::class);
     }
+
+    public function calculateStudentAverage($studentId)
+    {
+        return $this->tasks()
+            ->join('grades', 'tasks.id', '=', 'grades.task_id')
+            ->where('grades.student_id', $studentId)
+            ->avg('grades.grade');
+    }
+
 
     public function toSearchableArray()
     {

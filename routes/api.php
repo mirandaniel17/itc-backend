@@ -19,6 +19,7 @@ use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 
 Route::get('email/verify', [EmailVerificationController::class, 'showNotice'])->name('verification.notice');
@@ -125,6 +126,12 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
         Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
         Route::middleware('auth:sanctum')->get('notifications/unread', [NotificationController::class, 'unreadCount']);
+
+        Route::get('tasks/courses', [TaskController::class, 'getCourses']);
+        Route::get('tasks/course/{courseId}/list', [TaskController::class, 'getTasks']);
+        Route::post('tasks/create', [TaskController::class, 'createTask']);
+        Route::get('tasks/{taskId}/students', [TaskController::class, 'getStudentsWithGrades']);
+        Route::post('tasks/{taskId}/grades/save', [TaskController::class, 'saveGrades']);
     });
 
     Route::group(['middleware' => ['permission:Inscripciones']], function () {
