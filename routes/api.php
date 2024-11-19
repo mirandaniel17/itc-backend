@@ -60,11 +60,6 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('user/{id}/role', [RolesPermissionsController::class, 'getUserRole']);
         Route::post('user/{id}/role', [RolesPermissionsController::class, 'updateUserRole']);
         Route::get('roles/{roleName}/permissions', [RolesPermissionsController::class, 'getRolePermissions']);
-        
-        Route::get('notifications', [NotificationController::class, 'index']);
-        Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
-        Route::middleware('auth:sanctum')->get('/notifications/unread', [NotificationController::class, 'unreadCount']);
     });
 
     Route::group(['middleware' => ['permission:Consultar Estudiantes']], function () {
@@ -73,10 +68,6 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('students', [StudentController::class, 'registerStudent']);
         Route::put('students/{id}', [StudentController::class, 'editStudent']);
         Route::delete('students/{id}', [StudentController::class, 'deleteStudent']);
-        Route::get('notifications', [NotificationController::class, 'index']);
-        Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
-        Route::middleware('auth:sanctum')->get('/notifications/unread', [NotificationController::class, 'unreadCount']);
     });
 
     Route::group(['middleware' => ['permission:Gestión de Cursos']], function () {
@@ -125,7 +116,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
         Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
-        Route::middleware('auth:sanctum')->get('notifications/unread', [NotificationController::class, 'unreadCount']);
+        Route::get('notifications/unread', [NotificationController::class, 'unreadCount'])->middleware('auth:api');
 
         Route::get('tasks/courses', [TaskController::class, 'getCourses']);
         Route::get('tasks/course/{courseId}/list', [TaskController::class, 'getTasks']);
@@ -140,15 +131,17 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('enrollments', [EnrollmentController::class, 'registerEnrollment']);
         Route::put('enrollments/{id}', [EnrollmentController::class, 'editEnrollment']);
         Route::delete('enrollments/{id}', [EnrollmentController::class, 'deleteEnrollment']);
+    });
 
+    Route::group(['middleware' => ['permission:Ver Horarios']], function () {
         Route::get('schedules', [ScheduleController::class, 'getCourseSchedules']);
         Route::get('schedules/{id}', [ScheduleController::class, 'show']);
         Route::post('schedules', [ScheduleController::class, 'store']);
         Route::put('schedules/{id}', [ScheduleController::class, 'update']);
-
-        Route::get('notifications', [NotificationController::class, 'index']);
-        Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
-        Route::get('notifications/unread', [NotificationController::class, 'unreadCount'])->middleware('auth:api');
     });
+
+    Route::get('notifications', [NotificationController::class, 'index']);
+    Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
+    Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
+    Route::get('notifications/unread', [NotificationController::class, 'unreadCount'])->middleware('auth:api');
 });

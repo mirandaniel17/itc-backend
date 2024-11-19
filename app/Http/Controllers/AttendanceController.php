@@ -20,31 +20,21 @@ class AttendanceController extends Controller
 
     public function getAttendanceDates($course_id)
     {
-        $attendanceDates = Attendance::where('course_id', $course_id)
-            ->select('date')
-            ->distinct()
-            ->get();
+        $attendanceDates = Attendance::where('course_id', $course_id)->select('date')->distinct()->get();
         return response()->json($attendanceDates, Response::HTTP_OK);
     }
 
     public function getStudentsForAttendance($course_id, Request $request)
     {
         $date = $request->query('date');
-
         $students = Student::whereHas('enrollments', function ($query) use ($course_id) {
             $query->where('course_id', $course_id);
         })->orderBy('last_name', 'asc')->get();
-
         $attendances = [];
         foreach ($students as $student) {
-            $attendance = Attendance::where('student_id', $student->id)
-                ->where('course_id', $course_id)
-                ->whereDate('date', $date)
-                ->first();
-
+            $attendance = Attendance::where('student_id', $student->id)->where('course_id', $course_id)->whereDate('date', $date)->first();
             $attendances[$student->id] = $attendance ? $attendance->status : 'AUSENTE';
         }
-
         return response()->json([
             'students' => $students,
             'attendances' => $attendances,
@@ -67,10 +57,7 @@ class AttendanceController extends Controller
             );
             if ($attendanceModel->status == 'AUSENTE') {
                 $student = Student::find($attendance['student_id']);
-                $absencesCount = Attendance::where('student_id', $student->id)
-                    ->where('status', 'AUSENTE')
-                    ->count();
-
+                $absencesCount = Attendance::where('student_id', $student->id)->where('status', 'AUSENTE')->count();
                 if ($absencesCount >= 5) {
                     $users = User::all();
                     foreach ($users as $user) {
@@ -79,6 +66,6 @@ class AttendanceController extends Controller
                 }
             }
         }
-        return response()->json(['message' => 'Attendance saved successfully'], Response::HTTP_CREATED);
+        return response()->json(['message' => 'Asistencia guardada exitosamente'], Response::HTTP_CREATED);
     }
 }

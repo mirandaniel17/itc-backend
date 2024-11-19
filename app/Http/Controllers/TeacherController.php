@@ -24,7 +24,7 @@ class TeacherController extends Controller
     }
     
 
-     public function registerTeacher(TeacherRequest $request)
+    public function registerTeacher(TeacherRequest $request)
     {
         $teacher = Teacher::create($request->all());
         return response()->json($teacher, Response::HTTP_CREATED);

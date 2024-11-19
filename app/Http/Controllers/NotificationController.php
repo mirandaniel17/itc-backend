@@ -35,7 +35,7 @@ class NotificationController extends Controller
         return response()->json(['message' => 'Notificación no encontrada.'], 404);
     }
 
-   public function unreadCount()
+    public function unreadCount()
     {
         try {
             $user = auth()->user();
@@ -45,10 +45,7 @@ class NotificationController extends Controller
             $unreadCount = $user->notifications()->whereNull('read_at')->count();
             return response()->json(['unread_count' => $unreadCount], 200);
         } catch (\Exception $e) {
-            \Log::error('Error al obtener notificaciones: ' . $e->getMessage());
             return response()->json(['message' => 'Error al obtener las notificaciones.'], 500);
         }
     }
-
-
 }

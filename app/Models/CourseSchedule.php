@@ -9,12 +9,12 @@ class CourseSchedule extends Model
 {
     use HasFactory;
 
-    protected $fillable = 
-    [
-        'course_id', 
-        'shift_id', 
-        'day'
-    ];
+    protected $fillable =
+        [
+            'course_id',
+            'shift_id',
+            'day'
+        ];
 
     public function course()
     {

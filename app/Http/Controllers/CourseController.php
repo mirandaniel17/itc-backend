@@ -25,7 +25,6 @@ class CourseController extends Controller
         return response()->json($courses, Response::HTTP_OK);
     }
 
-
     public function registerCourse(CourseRequest $request)
     {
         $course = Course::create($request->all());

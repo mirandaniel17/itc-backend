@@ -33,9 +33,7 @@ class AuthController extends Controller
                 'hash' => sha1($user->email),
             ]
         );
-
         Mail::to($user->email)->send(new VerifyEmailMail($verificationUrl));
-
         return response()->json(['message' => 'Registro exitoso. Por favor, verifica tu correo electrónico.'], 201);
     }
 
@@ -66,9 +64,7 @@ class AuthController extends Controller
         }
 
         $permissions = $user->getAllPermissions()->pluck('name');
-
         $cookieExpirationTime = $rememberMe ? 60 * 24 * 7 : 60 * 24;
-
         $cookie = cookie('jwt', $token, $cookieExpirationTime);
 
         return response()->json([
@@ -82,7 +78,6 @@ class AuthController extends Controller
         ])->withCookie($cookie);
     }
 
-
     public function user()
     {
         $user = auth()->user();
@@ -92,9 +87,11 @@ class AuthController extends Controller
                 'message' => 'Usuario no autenticado.'
             ], Response::HTTP_UNAUTHORIZED);
         }
+
         $roles = $user->getRoleNames();
         $permissions = $user->getAllPermissions()->pluck('name');
         $userAgent = request()->header('User-Agent');
+
         return response()->json([
             'user' => $user,
             'roles' => $roles,
@@ -133,8 +130,6 @@ class AuthController extends Controller
         }
     }
 
-
-
     public function logout()
     {
         JWTAuth::invalidate(JWTAuth::getToken());
@@ -143,7 +138,4 @@ class AuthController extends Controller
             'message' => 'Cierre de sesión exitoso.'
         ], Response::HTTP_OK)->withCookie($cookie);
     }
-
-    
-
 }

@@ -16,9 +16,9 @@ class EnrollmentRequest extends FormRequest
 
     public function rules(): array
     {
-         return [
-            'student_id' => ['required', 'exists:students,id'],
-            'enrollment_date' => ['required', 'date'],
+        return [
+           'student_id' => ['required', 'exists:students,id'],
+           'enrollment_date' => ['required', 'date'],
         ];
     }
 

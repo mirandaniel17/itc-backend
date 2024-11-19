@@ -26,11 +26,13 @@ class DiscountController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
+
         if ($query) {
             $discounts = Discount::search($query)->paginate($perPage);
         } else {
             $discounts = Discount::paginate($perPage);
         }
+        
         return response()->json($discounts, Response::HTTP_OK);
     }
 

@@ -31,7 +31,7 @@ class RolesPermissionsController extends Controller
         $user = User::findOrFail($userId);
         $permissions = $request->input('permissions', []);
         $user->syncPermissions($permissions);
-        return response()->json(['message' => 'Permissions updated successfully.']);
+        return response()->json(['message' => 'Permisos actualizados exitosamente.']);
     }
 
     public function getUserRole($userId)
@@ -52,7 +52,7 @@ class RolesPermissionsController extends Controller
         if (is_null($role)) {
             $user->syncRoles([]);
             $user->syncPermissions([]);
-            return response()->json(['message' => 'Role and permissions removed successfully.']);
+            return response()->json(['message' => 'Roles y Permisos eliminados exitosamente.']);
         }
 
         if (!Role::where('name', $role)->exists()) {
@@ -60,7 +60,7 @@ class RolesPermissionsController extends Controller
         }
 
         $user->syncRoles([$role]);
-        return response()->json(['message' => 'Role updated successfully.']);
+        return response()->json(['message' => 'Rol actualizado exitosamente.']);
     }
 
     public function getAllRoles()
@@ -78,5 +78,4 @@ class RolesPermissionsController extends Controller
             'permissions' => $role->permissions->pluck('name'),
         ]);
     }
-
 }

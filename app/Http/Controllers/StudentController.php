@@ -25,7 +25,6 @@ class StudentController extends Controller
     
         return response()->json($students, Response::HTTP_OK);
     }
-    
 
     public function registerStudent(StudentRequest $request)
     {
@@ -49,7 +48,7 @@ class StudentController extends Controller
         $student = Student::create($data);
 
         return response()->json([
-            'message' => 'Student registered successfully.',
+            'message' => 'Estudiante registrado exitosamente.',
             'student' => $student
         ], Response::HTTP_CREATED);
     }
@@ -58,7 +57,7 @@ class StudentController extends Controller
     {
         $student = Student::find($id);
         if (!$student) {
-            return response()->json(['message' => 'Student not found.'], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'Estudiante no encontrado.'], Response::HTTP_NOT_FOUND);
         }
         return response()->json($student, Response::HTTP_OK);
     }
@@ -68,7 +67,7 @@ class StudentController extends Controller
         $student = Student::find($id);
 
         if (!$student) {
-            return response()->json(['message' => 'Student not found.'], Response::HTTP_NOT_FOUND);
+            return response()->json(['message' => 'Estudiante no encontrado.'], Response::HTTP_NOT_FOUND);
         }
 
         $data = $request->all();
@@ -85,7 +84,7 @@ class StudentController extends Controller
         $student->update($data);
 
         return response()->json([
-            'message' => 'Student updated successfully.',
+            'message' => 'Estudiante actualizado exitosamente.',
             'student' => $student
         ], Response::HTTP_OK);
     }
@@ -108,7 +107,7 @@ class StudentController extends Controller
         $student->delete();
 
         return response()->json([
-            'message' => 'Student deleted successfully.'
+            'message' => 'Estudiante eliminado exitosamente.'
         ], Response::HTTP_OK);
     }
 }

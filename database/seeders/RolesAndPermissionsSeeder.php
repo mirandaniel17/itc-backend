@@ -9,7 +9,7 @@ use Spatie\Permission\Models\Permission;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
-     public function run(): void
+    public function run(): void
     {
         Permission::create(['name' => 'Gestión de Cursos', 'guard_name' => 'api']);
         Permission::create(['name' => 'Gestión de Usuarios', 'guard_name' => 'api']);

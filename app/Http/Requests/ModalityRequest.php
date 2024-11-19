@@ -26,7 +26,7 @@ class ModalityRequest extends FormRequest
                 'required',
                 'integer',
                 'min:6',
-                'max:24', 
+                'max:24',
             ],
         ];
     }

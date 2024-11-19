@@ -14,11 +14,8 @@ class ShiftRequest extends FormRequest
         return true;
     }
 
-   public function rules(): array
+    public function rules(): array
     {
-        \Log::info('Start Time: ' . $this->input('start_time'));
-        \Log::info('End Time: ' . $this->input('end_time'));
-
         return [
             'name' => [
                 'required',

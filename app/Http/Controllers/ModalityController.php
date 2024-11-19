@@ -13,11 +13,13 @@ class ModalityController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
+
         if ($query) {
             $modalities = Modality::search($query)->paginate($perPage);
         } else {
             $modalities = Modality::paginate($perPage);
         }
+        
         return response()->json($modalities, Response::HTTP_OK);
     }
 

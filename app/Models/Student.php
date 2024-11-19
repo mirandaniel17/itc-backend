@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
+use Illuminate\Notifications\Notifiable;
 
 class Student extends Model
 {
-    use HasFactory, Searchable;
+    use HasFactory, Searchable, Notifiable;
 
     protected $fillable = [
         'last_name',

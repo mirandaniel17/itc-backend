@@ -14,7 +14,7 @@ class Enrollment extends Model
         'course_id',
         'discount_id',
         'document_1',
-        'document_2', 
+        'document_2',
         'enrollment_date',
         'payment_type',
     ];

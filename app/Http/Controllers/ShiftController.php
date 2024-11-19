@@ -58,7 +58,7 @@ class ShiftController extends Controller
         $shift->update($request->all());
 
         return response()->json([
-            'message' => 'Turno actualizado correctamente',
+            'message' => 'Turno actualizado exitosamente',
             'shift' => $shift
         ], Response::HTTP_OK);
     }
@@ -69,7 +69,7 @@ class ShiftController extends Controller
         $shift->delete();
 
         return response()->json([
-            'message' => 'Turno eliminado correctamente'
+            'message' => 'Turno eliminado exitosamente'
         ], Response::HTTP_OK);
     }
 }

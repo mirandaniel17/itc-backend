@@ -20,7 +20,7 @@ class CourseRequest extends FormRequest
         return [
             'name' => 'required|string|max:255|regex:/^[A-Z]/',
             'description' => 'required|string',
-            'start_date' => 'required|date|before:end_date', 
+            'start_date' => 'required|date|before:end_date',
             'end_date' => [
                 'required',
                 'date',

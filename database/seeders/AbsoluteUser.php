@@ -14,7 +14,7 @@ class AbsoluteUser extends Seeder
     public function run()
     {
         $user = User::firstOrCreate([
-            'email' => 'admin@test.com' 
+            'email' => 'admin@test.com'
         ], [
             'name' => 'Administrador',
             'password' => Hash::make('qwerty123'),

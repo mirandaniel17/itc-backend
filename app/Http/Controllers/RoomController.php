@@ -12,11 +12,13 @@ class RoomController extends Controller
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
+
         if ($query) {
             $rooms = Room::search($query)->paginate($perPage);
         } else {
             $rooms = Room::paginate($perPage);
         }
+        
         return response()->json($rooms, Response::HTTP_OK);
     }
 
@@ -31,7 +33,7 @@ class RoomController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Sala creada exitosamente',
+            'message' => 'Aula creada exitosamente',
             'room' => $room,
         ], Response::HTTP_CREATED);
     }
@@ -54,7 +56,7 @@ class RoomController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Sala actualizada exitosamente',
+            'message' => 'Aula actualizada exitosamente',
             'room' => $room,
         ], Response::HTTP_OK);
     }
@@ -65,7 +67,7 @@ class RoomController extends Controller
         $room->delete();
 
         return response()->json([
-            'message' => 'Sala eliminada exitosamente',
+            'message' => 'Aula eliminada exitosamente',
         ], Response::HTTP_OK);
     }
 }

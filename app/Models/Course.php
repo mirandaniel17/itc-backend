@@ -17,7 +17,7 @@ class Course extends Model
         'cost',
         'start_date',
         'end_date',
-        'teacher_id', 
+        'teacher_id',
         'modality_id'
     ];
 

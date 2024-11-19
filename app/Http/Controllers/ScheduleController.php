@@ -12,10 +12,8 @@ class ScheduleController extends Controller
     public function index()
     {
         $courses = CourseSchedule::with(['course', 'shift'])->get();
-        \Log::info($courses);
         return response()->json($courses, Response::HTTP_OK);
     }
-
 
     public function store(Request $request)
     {
@@ -23,7 +21,7 @@ class ScheduleController extends Controller
         $schedules = $request->input('schedules');
 
         if (!is_array($schedules)) {
-            return response()->json(['error' => 'El campo schedules debe ser un array.'], 400);
+            return response()->json(['error' => 'Los horarios deben estar agrupados.'], 400);
         }
 
         foreach ($schedules as $schedule) {
@@ -57,8 +55,8 @@ class ScheduleController extends Controller
                 'shift_name' => $schedule->shift->name,
                 'start_time' => $schedule->shift->start_time,
                 'end_time' => $schedule->shift->end_time,
-                'start_date' => $schedule->course->start_date, 
-                'end_date' => $schedule->course->end_date,   
+                'start_date' => $schedule->course->start_date,
+                'end_date' => $schedule->course->end_date,
             ];
         });
 
@@ -98,7 +96,4 @@ class ScheduleController extends Controller
 
         return response()->json(['message' => 'Horario actualizado correctamente']);
     }
-
-
-
 }
