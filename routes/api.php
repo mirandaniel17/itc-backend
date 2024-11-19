@@ -63,6 +63,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     });
 
     Route::group(['middleware' => ['permission:Consultar Estudiantes']], function () {
+        Route::get('students/all', [StudentController::class, 'getAllStudents']);
         Route::get('students', [StudentController::class, 'getStudents']);
         Route::get('students/{id}', [StudentController::class, 'getStudentById']);
         Route::post('students', [StudentController::class, 'registerStudent']);

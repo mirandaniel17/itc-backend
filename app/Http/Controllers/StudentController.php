@@ -15,16 +15,17 @@ class StudentController extends Controller
     public function getStudents(Request $request)
     {
         $perPage = $request->input('per_page', 10);
-        $query = $request->input('query');
-    
+        $query = $request->input('query', null);
+
         if ($query) {
             $students = Student::search($query)->orderBy('last_name', 'asc')->paginate($perPage);
         } else {
             $students = Student::orderBy('last_name', 'asc')->paginate($perPage);
         }
-    
+
         return response()->json($students, Response::HTTP_OK);
     }
+
 
     public function registerStudent(StudentRequest $request)
     {
@@ -96,7 +97,7 @@ class StudentController extends Controller
 
         if (!$student) {
             return response()->json([
-                'message' => 'Student not found.'
+                'message' => 'Estudiante no encontrado.'
             ], Response::HTTP_NOT_FOUND);
         }
 
@@ -110,4 +111,12 @@ class StudentController extends Controller
             'message' => 'Estudiante eliminado exitosamente.'
         ], Response::HTTP_OK);
     }
+
+    public function getAllStudents()
+    {
+        $students = Student::orderBy('last_name', 'asc')->get();
+
+        return response()->json($students, Response::HTTP_OK);
+    }
+
 }
