@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\Course;
+use App\Models\User;
 use App\Http\Requests\CourseRequest;
+use App\Notifications\CourseCompletionNotification;
+use Carbon\Carbon;
 
 class CourseController extends Controller
 {
@@ -49,5 +52,24 @@ class CourseController extends Controller
         $course = Course::findOrFail($id);
         $course->delete();
         return response()->json($course, Response::HTTP_OK);
+    }
+
+    public function notifyCourseCompletion()
+    {
+        $today = Carbon::today();
+        $courses = Course::whereDate('end_date', $today)->get();
+
+        if ($courses->isEmpty()) {
+            return response()->json(['message' => 'No hay cursos que finalicen hoy.'], Response::HTTP_OK);
+        }
+
+        foreach ($courses as $course) {
+            $users = User::all();
+            foreach ($users as $user) {
+                $user->notify(new CourseCompletionNotification($course));
+            }
+        }
+
+        return response()->json(['message' => 'Notificaciones de finalización de cursos enviadas.'], Response::HTTP_OK);
     }
 }

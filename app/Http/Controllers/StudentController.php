@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Student;
+use App\Models\Enrollment;
+use App\Models\Course;
+use App\Models\Task;
+use App\Models\Grade;
+use App\Models\Attendance;
+use App\Models\Schedule;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StudentRequest;
 
@@ -115,5 +121,76 @@ class StudentController extends Controller
         $students = Student::orderBy('last_name', 'asc')->get();
 
         return response()->json($students, Response::HTTP_OK);
+    }
+
+    public function getAcademicHistory($id)
+    {
+        $student = Student::with([
+            'enrollments.course.tasks.grades',
+            'enrollments.course.attendances',
+            'enrollments.course.courseSchedules.shift'
+        ])->find($id);
+
+        if (!$student) {
+            return response()->json(['message' => 'Estudiante no encontrado.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $history = [];
+
+        foreach ($student->enrollments as $enrollment) {
+            $course = $enrollment->course;
+            $schedules = $course->courseSchedules->map(function ($schedule) {
+                return [
+                    'day' => $schedule->day ?? 'Sin día asignado',
+                    'start_time' => $schedule->shift->start_time ?? 'Sin hora de inicio',
+                    'end_time' => $schedule->shift->end_time ?? 'Sin hora de fin',
+                ];
+            })->toArray();
+
+            $grades = $course->tasks->map(function ($task) use ($student) {
+                $grade = $task->grades->where('student_id', $student->id)->first();
+                return [
+                    'task' => $task->title,
+                    'grade' => $grade->grade ?? 0,
+                ];
+            })->toArray();
+
+            $attendanceCounts = [
+                'PRESENTE' => $course->attendances->where('student_id', $student->id)->where('status', 'PRESENTE')->count(),
+                'AUSENTE' => $course->attendances->where('student_id', $student->id)->where('status', 'AUSENTE')->count(),
+                'LICENCIA' => $course->attendances->where('student_id', $student->id)->where('status', 'LICENCIA')->count(),
+            ];
+
+            $totalPayments = $enrollment->payments->sum('amount');
+
+            $history[] = [
+                'course' => $course->name,
+                'start_date' => $course->start_date,
+                'end_date' => $course->end_date,
+                'schedules' => $schedules,
+                'grades' => $grades,
+                'attendance' => $attendanceCounts,
+                'payments' => $totalPayments,
+            ];
+        }
+
+        return response()->json($history, Response::HTTP_OK);
+    }
+
+    public function disableStudent(Request $request, $id)
+    {
+        $student = Student::find($id);
+
+        if (!$student) {
+            return response()->json(['message' => 'Estudiante no encontrado.'], Response::HTTP_NOT_FOUND);
+        }
+
+        $student->status = !$student->status;
+        $student->save();
+
+        return response()->json([
+            'message' => 'Estado del estudiante actualizado con éxito.',
+            'status' => $student->status
+        ], Response::HTTP_OK);
     }
 }

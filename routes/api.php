@@ -50,7 +50,6 @@ Route::get('reset-password/email/{token}', [PasswordResetController::class, 'get
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-
 Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::get('dashboard/counts', [DashboardController::class, 'getCounts']);
     Route::get('user', [AuthController::class, 'user']);
@@ -75,6 +74,8 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('students', [StudentController::class, 'registerStudent']);
         Route::put('students/{id}', [StudentController::class, 'editStudent']);
         Route::delete('students/{id}', [StudentController::class, 'deleteStudent']);
+        Route::get('students/{id}/academic-history', [StudentController::class, 'getAcademicHistory']);
+        Route::patch('students/{id}/disable', [StudentController::class, 'disableStudent']);
     });
 
     Route::group(['middleware' => ['permission:Gestión de Cursos']], function () {
@@ -154,6 +155,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
     Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
     Route::get('notifications/unread', [NotificationController::class, 'unreadCount'])->middleware('auth:api');
+    Route::post('courses/notify-completion', [CourseController::class, 'notifyCourseCompletion']);
 
     Route::post('export-attendance-report', [ReportController::class, 'exportAttendanceReport']);
     Route::post('export-enrollment-report', [ReportController::class, 'exportEnrollmentReport']);
