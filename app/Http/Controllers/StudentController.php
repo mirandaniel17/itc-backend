@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Student;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StudentRequest;
-use Illuminate\Support\Facades\Log;
 
 class StudentController extends Controller
 {
@@ -72,7 +71,6 @@ class StudentController extends Controller
         }
 
         $data = $request->all();
-        Log::info($data);
 
         if ($request->hasFile('image')) {
             $image = $request->file('image')->store('students', 'public');
@@ -118,5 +116,4 @@ class StudentController extends Controller
 
         return response()->json($students, Response::HTTP_OK);
     }
-
 }

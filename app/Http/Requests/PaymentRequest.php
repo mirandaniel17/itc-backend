@@ -7,7 +7,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
 
-class DiscountRequest extends FormRequest
+class PaymentRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,13 +17,9 @@ class DiscountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => [
-                'required',
-                'string',
-                'max:100',
-                'regex:/^[a-zA-Z\s]+$/',
-            ],
-            'percentage' => 'required|numeric|min:10|max:100',
+            'enrollment_id' => 'required|exists:enrollments,id',
+            'amount' => 'required|numeric|min:10',
+            'payment_date' => 'required|date',
         ];
     }
 

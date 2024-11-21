@@ -6,7 +6,18 @@ use Illuminate\Http\Request;
 
 class NotificationController extends Controller
 {
-    public function index(Request $request)
+    public function getNotification(Request $request)
+    {
+        $user = $request->user();
+        $notifications = $user->notifications()
+            ->whereNull('read_at')
+            ->latest()
+            ->get();
+            
+        return response()->json($notifications);
+    }
+
+    public function getNotifications(Request $request)
     {
         $user = $request->user();
         $notifications = $user->notifications()->latest()->get();

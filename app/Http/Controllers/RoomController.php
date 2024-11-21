@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 
 class RoomController extends Controller
 {
-    public function index(Request $request)
+    public function getRooms(Request $request)
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
@@ -22,7 +22,7 @@ class RoomController extends Controller
         return response()->json($rooms, Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function registerRoom(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:100',
@@ -38,13 +38,13 @@ class RoomController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function show($id)
+    public function getRoomById($id)
     {
         $room = Room::findOrFail($id);
         return response()->json($room, Response::HTTP_OK);
     }
 
-    public function update(Request $request, $id)
+    public function editRoom(Request $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:100',
@@ -61,7 +61,7 @@ class RoomController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function destroy($id)
+    public function deleteRoom($id)
     {
         $room = Room::findOrFail($id);
         $room->delete();

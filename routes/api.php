@@ -1,7 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
-use App\Models\User;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RolesPermissionsController;
@@ -10,7 +11,6 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ModalityController;
 use App\Http\Controllers\CourseController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ShiftController;
 use App\Http\Controllers\DiscountController;
@@ -20,9 +20,12 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\TaskController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReportController;
+use App\Models\User;
 
 Route::get('email/verify', [EmailVerificationController::class, 'showNotice'])->name('verification.notice');
+
 Route::get('email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
     $user = User::findOrFail($id);
     if (!hash_equals(sha1($user->getEmailForVerification()), (string) $hash)) {
@@ -35,15 +38,18 @@ Route::get('email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
     $user->save();
     return redirect('http://localhost:5173/login?verified=1');
 })->middleware('signed')->name('verification.verify');
+
 Route::post('email/resend', [EmailVerificationController::class, 'resendVerificationEmail'])->middleware(['auth:api', 'throttle:6,1'])->name('verification.resend');
 Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail']);
 Route::get('reset-password/{token}', function ($token) {
     return redirect("http://localhost:5173/reset-password/{$token}");
 })->name('password.reset');
+
 Route::post('reset-password', [PasswordResetController::class, 'resetPassword']);
 Route::get('reset-password/email/{token}', [PasswordResetController::class, 'getEmailByToken']);
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+
 
 Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::get('dashboard/counts', [DashboardController::class, 'getCounts']);
@@ -90,40 +96,42 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::put('courses/{id}', [CourseController::class, 'editCourse']);
         Route::delete('courses/{id}', [CourseController::class, 'deleteCourse']);
 
-        Route::get('shifts', [ShiftController::class, 'index']);
-        Route::get('shifts/{id}', [ShiftController::class, 'show']);
-        Route::post('shifts', [ShiftController::class, 'store']);
-        Route::put('shifts/{id}', [ShiftController::class, 'update']);
-        Route::delete('shifts/{id}', [ShiftController::class, 'destroy']);
+        Route::get('shifts', [ShiftController::class, 'getShifts']);
+        Route::post('shifts', [ShiftController::class, 'registerShift']);
+        Route::get('shifts/{id}', [ShiftController::class, 'getShiftById']);
+        Route::put('shifts/{id}', [ShiftController::class, 'editShift']);
+        Route::delete('shifts/{id}', [ShiftController::class, 'deleteShift']);
 
-        Route::get('discounts', [DiscountController::class, 'index']);
-        Route::get('discounts/{id}', [DiscountController::class, 'show']);
-        Route::post('discounts', [DiscountController::class, 'store']);
-        Route::put('discounts/{id}', [DiscountController::class, 'update']);
-        Route::delete('discounts/{id}', [DiscountController::class, 'destroy']);
+        Route::get('discounts', [DiscountController::class, 'getDiscounts']);
+        Route::post('discounts', [DiscountController::class, 'registerDiscounts']);
+        Route::get('discounts/{id}', [DiscountController::class, 'getDiscountById']);
+        Route::put('discounts/{id}', [DiscountController::class, 'editDiscount']);
+        Route::delete('discounts/{id}', [DiscountController::class, 'deleteDiscount']);
 
-        Route::get('rooms', [RoomController::class, 'index']);
-        Route::post('rooms', [RoomController::class, 'store']);
-        Route::get('rooms/{id}', [RoomController::class, 'show']);
-        Route::put('rooms/{id}', [RoomController::class, 'update']);
-        Route::delete('rooms/{id}', [RoomController::class, 'destroy']);
+        Route::get('rooms', [RoomController::class, 'getRooms']);
+        Route::post('rooms', [RoomController::class, 'registerRoom']);
+        Route::get('rooms/{id}', [RoomController::class, 'getRoomById']);
+        Route::put('rooms/{id}', [RoomController::class, 'editRoom']);
+        Route::delete('rooms/{id}', [RoomController::class, 'deleteRoom']);
 
-        Route::get('courses-attendance', [AttendanceController::class, 'index']);
+        Route::get('courses-attendance', [AttendanceController::class, 'getCoursesByEveryAttendance']);
         Route::get('courses/{course_id}/attendance-dates', [AttendanceController::class, 'getAttendanceDates']);
         Route::get('courses/{course_id}/students', [AttendanceController::class, 'getStudentsForAttendance']);
         Route::post('attendance', [AttendanceController::class, 'storeAttendance']);
         Route::get('attendance-dates/{course_id}', [AttendanceController::class, 'getAttendanceDates']);
-
-        Route::get('notifications', [NotificationController::class, 'index']);
-        Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
-        Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
-        Route::get('notifications/unread', [NotificationController::class, 'unreadCount'])->middleware('auth:api');
 
         Route::get('tasks/courses', [TaskController::class, 'getCourses']);
         Route::get('tasks/course/{courseId}/list', [TaskController::class, 'getTasks']);
         Route::post('tasks/create', [TaskController::class, 'createTask']);
         Route::get('tasks/{taskId}/students', [TaskController::class, 'getStudentsWithGrades']);
         Route::post('tasks/{taskId}/grades/save', [TaskController::class, 'saveGrades']);
+
+        Route::get('payments', [PaymentController::class, 'getPayments']);
+        Route::post('payments', [PaymentController::class, 'registerPayment']);
+        Route::get('payments/{id}', [PaymentController::class, 'getPaymentById']);
+        Route::put('payments/{id}', [PaymentController::class, 'editPayment']);
+        Route::delete('payments/{id}', [PaymentController::class, 'deletePayment']);
+        Route::get('payments/student-details/{studentId}', [PaymentController::class, 'getStudentDetails']);
     });
 
     Route::group(['middleware' => ['permission:Inscripciones']], function () {
@@ -136,13 +144,18 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
 
     Route::group(['middleware' => ['permission:Ver Horarios']], function () {
         Route::get('schedules', [ScheduleController::class, 'getCourseSchedules']);
-        Route::get('schedules/{id}', [ScheduleController::class, 'show']);
-        Route::post('schedules', [ScheduleController::class, 'store']);
-        Route::put('schedules/{id}', [ScheduleController::class, 'update']);
+        Route::post('schedules', [ScheduleController::class, 'registerSchedule']);
+        Route::get('schedules/{id}', [ScheduleController::class, 'getScheduleById']);
+        Route::put('schedules/{id}', [ScheduleController::class, 'editSchedule']);
     });
 
-    Route::get('notifications', [NotificationController::class, 'index']);
+    Route::get('notifications', [NotificationController::class, 'getNotification']);
+    Route::get('notifications/all', [NotificationController::class, 'getNotifications']);
     Route::post('notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead']);
     Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
     Route::get('notifications/unread', [NotificationController::class, 'unreadCount'])->middleware('auth:api');
+
+    Route::post('export-attendance-report', [ReportController::class, 'exportAttendanceReport']);
+    Route::post('export-enrollment-report', [ReportController::class, 'exportEnrollmentReport']);
+    Route::post('export-grades-report', [ReportController::class, 'exportGradesReport']);
 });

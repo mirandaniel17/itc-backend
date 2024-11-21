@@ -34,6 +34,16 @@ class Student extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return trim("{$this->last_name} {$this->second_last_name} {$this->name}");
+    }
+
     public function toSearchableArray()
     {
         return [
@@ -44,5 +54,10 @@ class Student extends Model
             'placeofbirth' => $this->placeofbirth,
             'phone' => $this->phone,
         ];
+    }
+
+    public function getAbsencesCountAttribute()
+    {
+        return $this->attendances()->where('status', 'AUSENTE')->count();
     }
 }

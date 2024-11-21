@@ -9,20 +9,7 @@ use App\Http\Requests\DiscountRequest;
 
 class DiscountController extends Controller
 {
-    public function store(DiscountRequest $request)
-    {
-        $discount = Discount::create([
-            'name' => $request->name,
-            'percentage' => $request->percentage,
-        ]);
-
-        return response()->json([
-            'message' => 'Descuento creado correctamente',
-            'discount' => $discount
-        ], Response::HTTP_CREATED);
-    }
-
-    public function index(Request $request)
+    public function getDiscounts(Request $request)
     {
         $perPage = $request->input('per_page', 10);
         $query = $request->input('query');
@@ -35,15 +22,27 @@ class DiscountController extends Controller
         
         return response()->json($discounts, Response::HTTP_OK);
     }
+    
+    public function registerDiscounts(DiscountRequest $request)
+    {
+        $discount = Discount::create([
+            'name' => $request->name,
+            'percentage' => $request->percentage,
+        ]);
 
+        return response()->json([
+            'message' => 'Descuento creado correctamente',
+            'discount' => $discount
+        ], Response::HTTP_CREATED);
+    }
 
-    public function show($id)
+    public function getDiscountById($id)
     {
         $discount = Discount::findOrFail($id);
         return response()->json($discount, Response::HTTP_OK);
     }
 
-    public function update(DiscountRequest $request, $id)
+    public function editDiscount(DiscountRequest $request, $id)
     {
         $discount = Discount::findOrFail($id);
 
@@ -60,7 +59,7 @@ class DiscountController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function destroy($id)
+    public function deleteDiscount($id)
     {
         $discount = Discount::findOrFail($id);
         $discount->delete();

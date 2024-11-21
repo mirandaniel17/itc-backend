@@ -11,6 +11,7 @@ use App\Models\Enrollment;
 use App\Models\Modality;
 use App\Models\Room;
 use App\Models\Shift;
+use App\Models\Payment;
 
 class DashboardController extends Controller
 {
@@ -24,6 +25,7 @@ class DashboardController extends Controller
         $totalModalities = Modality::count();
         $totalRooms = Room::count();
         $totalShifts = Shift::count();
+        $totalPayments = Payment::count();
         return response()->json([
             'totalUsers' => $totalUsers,
             'totalStudents' => $totalStudents,
@@ -33,6 +35,7 @@ class DashboardController extends Controller
             'totalModalities' => $totalModalities,
             'totalRooms' => $totalRooms,
             'totalShifts' => $totalShifts,
+            'totalPayments' => $totalPayments,
         ]);
     }
 }

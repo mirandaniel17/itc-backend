@@ -9,13 +9,13 @@ use App\Models\Shift;
 
 class ScheduleController extends Controller
 {
-    public function index()
+    public function getSchedules()
     {
         $courses = CourseSchedule::with(['course', 'shift'])->get();
         return response()->json($courses, Response::HTTP_OK);
     }
 
-    public function store(Request $request)
+    public function registerSchedule(Request $request)
     {
         $course_id = $request->input('course_id');
         $schedules = $request->input('schedules');
@@ -64,7 +64,7 @@ class ScheduleController extends Controller
     }
 
 
-    public function show($id)
+    public function getScheduleById($id)
     {
         $schedule = CourseSchedule::with(['course', 'shift'])->findOrFail($id);
 
@@ -82,7 +82,7 @@ class ScheduleController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function editSchedule(Request $request, $id)
     {
         $schedule = CourseSchedule::findOrFail($id);
 

@@ -25,7 +25,13 @@ class StudentAbsenceAlert extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'message' => 'El estudiante ' . $this->student->name . ' tiene 5 o más faltas.',
+            'message' => 'El estudiante ' .
+             $this->student->name . ' ' .
+             $this->student->last_name . ' ' .
+             $this->student->second_last_name .
+             ' tiene ' .
+             $this->student->absences_count .
+             ' faltas acumuladas.',
             'student_name' => "{$this->student->name} {$this->student->last_name} {$this->student->second_last_name}",
             'absence_count' => $this->student->absences_count,
         ];

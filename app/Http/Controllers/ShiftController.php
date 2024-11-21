@@ -10,7 +10,20 @@ use App\Http\Requests\ShiftRequest;
 
 class ShiftController extends Controller
 {
-    public function store(ShiftRequest $request)
+    public function getShifts(Request $request)
+    {
+        $perPage = $request->input('per_page', 10);
+        $query = $request->input('query');
+        if ($query) {
+            $shifts = Shift::search($query)->paginate($perPage);
+        } else {
+            $shifts = Shift::with('room')->paginate($perPage);
+        }
+        $shifts->load('room');
+        return response()->json($shifts, Response::HTTP_OK);
+    }
+
+    public function registerShift(ShiftRequest $request)
     {
         $shift = Shift::create([
             'name' => $request->name,
@@ -25,26 +38,13 @@ class ShiftController extends Controller
         ], Response::HTTP_CREATED);
     }
 
-    public function index(Request $request)
-    {
-        $perPage = $request->input('per_page', 10);
-        $query = $request->input('query');
-        if ($query) {
-            $shifts = Shift::search($query)->paginate($perPage);
-        } else {
-            $shifts = Shift::with('room')->paginate($perPage);
-        }
-        $shifts->load('room');
-        return response()->json($shifts, Response::HTTP_OK);
-    }
-
-    public function show($id)
+    public function getShiftById($id)
     {
         $shift = Shift::with('room')->findOrFail($id);
         return response()->json($shift, Response::HTTP_OK);
     }
 
-    public function update(ShiftRequest $request, $id)
+    public function editShift(ShiftRequest $request, $id)
     {
         $shift = Shift::findOrFail($id);
 
@@ -63,7 +63,7 @@ class ShiftController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function destroy($id)
+    public function deleteShift($id)
     {
         $shift = Shift::findOrFail($id);
         $shift->delete();

@@ -41,6 +41,11 @@ class Course extends Model
         return $this->hasMany(Task::class);
     }
 
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
     public function courseSchedules()
     {
         return $this->hasMany(CourseSchedule::class);

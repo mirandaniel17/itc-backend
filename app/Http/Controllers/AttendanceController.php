@@ -12,7 +12,7 @@ use App\Notifications\StudentAbsenceAlert;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function getCoursesByEveryAttendance()
     {
         $courses = Course::with('teacher', 'modality')->get();
         return response()->json($courses, Response::HTTP_OK);
