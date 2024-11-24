@@ -103,25 +103,44 @@ class AuthController extends Controller
     public function updateUserProfile(Request $request)
     {
         try {
-            $validated = $request->validate([
-                'name' => [
-                    'required',
-                    'string',
-                    'max:20',
-                    'regex:/^[a-zA-Z\s]+$/',
-                ],
-            ]);
-
             $user = auth()->user();
-            $user->name = $validated['name'];
+
+            if ($request->has('name') && !empty($request->input('name'))) {
+                $user->name = $request->input('name');
+            }
+
+            if ($request->has('currentPassword') && $request->has('newPassword')) {
+                if (!Hash::check($request->input('currentPassword'), $user->password)) {
+                    return response()->json([
+                        'message' => 'La contraseña actual no es correcta.'
+                    ], Response::HTTP_UNAUTHORIZED);
+                }
+
+                $newPassword = $request->input('newPassword');
+                $passwordValidationRules = [
+                    'password' => [
+                        'required',
+                        'string',
+                        'min:8',
+                        'regex:/^(?=.*[A-Z])(?=.*[\W_]).+$/',
+                    ],
+                ];
+
+                $validator = \Validator::make(['password' => $newPassword], $passwordValidationRules);
+
+                if ($validator->fails()) {
+                    return response()->json([
+                        'message' => 'La nueva contraseña no cumple con los requisitos.',
+                        'errors' => $validator->errors()
+                    ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                }
+
+                $user->password = Hash::make($newPassword);
+            }
+
             $user->save();
 
             return response()->json(['message' => 'Perfil actualizado con éxito.', 'user' => $user], Response::HTTP_OK);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json([
-                'message' => 'Error de validación.',
-                'errors' => $e->errors()
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error inesperado.',
@@ -129,6 +148,7 @@ class AuthController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
 
     public function logout()
     {

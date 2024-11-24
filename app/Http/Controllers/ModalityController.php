@@ -35,7 +35,7 @@ class ModalityController extends Controller
         return response()->json($modality, Response::HTTP_OK);
     }
 
-    public function editModality(Request $request, $id)
+    public function editModality(ModalityRequest $request, $id)
     {
         $modality = Modality::findOrFail($id);
         $modality->update($request->all());
