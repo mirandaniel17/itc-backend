@@ -123,6 +123,14 @@ class StudentController extends Controller
         return response()->json($students, Response::HTTP_OK);
     }
 
+    public function getActiveStudents()
+    {
+        $students = Student::where('status', 1)->orderBy('last_name', 'asc')->get();
+
+        return response()->json($students, Response::HTTP_OK);
+    }
+
+
     public function getAcademicHistory($id)
     {
         $student = Student::with([

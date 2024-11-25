@@ -52,6 +52,12 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::get('dashboard/counts', [DashboardController::class, 'getCounts']);
+    Route::get('dashboard/enrollments-by-date', [DashboardController::class, 'getEnrollmentsByDate']);
+    Route::get('dashboard/payments-by-course', [DashboardController::class, 'getPaymentsByCourse']);
+    Route::get('dashboard/payments-by-modality', [DashboardController::class, 'getPaymentsByModality']);
+    Route::get('dashboard/student-registrations-by-date', [DashboardController::class, 'getStudentRegistrationsByDate']);
+    Route::get('dashboard/students-by-course', [DashboardController::class, 'studentsByCourse']);
+
     Route::get('user', [AuthController::class, 'user']);
     Route::put('user/update', [AuthController::class, 'updateUserProfile']);
     Route::post('logout', [AuthController::class, 'logout']);
@@ -68,6 +74,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     });
 
     Route::group(['middleware' => ['permission:Consultar Estudiantes']], function () {
+        Route::get('students/active', [StudentController::class, 'getActiveStudents']);
         Route::get('students/all', [StudentController::class, 'getAllStudents']);
         Route::get('students', [StudentController::class, 'getStudents']);
         Route::get('students/{id}', [StudentController::class, 'getStudentById']);

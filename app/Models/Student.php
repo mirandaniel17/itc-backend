@@ -26,7 +26,6 @@ class Student extends Model
 
     protected $casts = [
         'dateofbirth' => 'date',
-        'status' => 'boolean',
     ];
 
     public function enrollments()
