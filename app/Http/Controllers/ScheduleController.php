@@ -49,6 +49,7 @@ class ScheduleController extends Controller
 
         $schedules = $query->get()->map(function ($schedule) {
             return [
+                'id' => $schedule->id,
                 'course_name' => $schedule->course->name,
                 'parallel' => $schedule->course->parallel,
                 'day' => $schedule->day,
@@ -85,15 +86,22 @@ class ScheduleController extends Controller
     public function editSchedule(Request $request, $id)
     {
         $schedule = CourseSchedule::findOrFail($id);
-
         $request->validate([
             'shift_id' => 'required|exists:shifts,id',
         ]);
-
         $schedule->update([
             'shift_id' => $request->input('shift_id'),
         ]);
-
         return response()->json(['message' => 'Horario actualizado correctamente']);
     }
+
+    public function deleteScheduleById($id)
+    {
+        $schedule = CourseSchedule::findOrFail($id);
+        $schedule->delete();
+        return response()->json([
+            'message' => 'El horario fue eliminado correctamente.'
+        ], Response::HTTP_OK);
+    }
+
 }

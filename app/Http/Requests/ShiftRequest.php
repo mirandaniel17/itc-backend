@@ -38,19 +38,33 @@ class ShiftRequest extends FormRequest
 
                     $diffInMinutes = $startTime->diffInMinutes($endTime);
 
-                    \Log::info('Diferencia en minutos ajustada: ' . $diffInMinutes);
-
                     if ($diffInMinutes < 60) {
                         $fail('La diferencia entre la hora inicial y la final debe ser de al menos 1 hora.');
                     }
                 },
             ],
+            'room_id' => [
+                'required',
+                'exists:rooms,id',
+                function ($attribute, $value, $fail) {
+                    $overlappingShift = \App\Models\Shift::where('room_id', $value)
+                        ->where(function ($query) {
+                            $query->whereBetween('start_time', [$this->input('start_time'), $this->input('end_time')])
+                                  ->orWhereBetween('end_time', [$this->input('start_time'), $this->input('end_time')])
+                                  ->orWhere(function ($q) {
+                                      $q->where('start_time', '<=', $this->input('start_time'))
+                                        ->where('end_time', '>=', $this->input('end_time'));
+                                  });
+                        })
+                        ->exists();
 
-            'room_id' => 'required|exists:rooms,id',
+                    if ($overlappingShift) {
+                        $fail('Ya existe un turno asignado en esta aula y en este horario.');
+                    }
+                },
+        ],
         ];
     }
-
-
 
     protected function failedValidation(Validator $validator)
     {

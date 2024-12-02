@@ -59,4 +59,18 @@ class TaskController extends Controller
 
         return response()->json(['message' => 'Notas guardadas con éxito'], Response::HTTP_OK);
     }
+
+    public function deleteTask($taskId)
+    {
+        $task = Task::find($taskId);
+
+        if (!$task) {
+            return response()->json(['message' => 'Tarea no encontrada'], Response::HTTP_NOT_FOUND);
+        }
+
+        $task->delete();
+
+        return response()->json(['message' => 'Tarea eliminada correctamente'], Response::HTTP_OK);
+    }
+
 }

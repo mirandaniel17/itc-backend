@@ -133,6 +133,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('tasks/create', [TaskController::class, 'createTask']);
         Route::get('tasks/{taskId}/students', [TaskController::class, 'getStudentsWithGrades']);
         Route::post('tasks/{taskId}/grades/save', [TaskController::class, 'saveGrades']);
+        Route::delete('/tasks/{taskId}', [TaskController::class, 'deleteTask']);
 
         Route::get('payments', [PaymentController::class, 'getPayments']);
         Route::post('payments', [PaymentController::class, 'registerPayment']);
@@ -155,6 +156,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
         Route::post('schedules', [ScheduleController::class, 'registerSchedule']);
         Route::get('schedules/{id}', [ScheduleController::class, 'getScheduleById']);
         Route::put('schedules/{id}', [ScheduleController::class, 'editSchedule']);
+        Route::delete('schedules/{id}', [ScheduleController::class, 'deleteScheduleById']);
     });
 
     Route::get('notifications', [NotificationController::class, 'getNotification']);
