@@ -10,13 +10,12 @@ class Shift extends Model
 {
     use HasFactory, Searchable;
 
-    protected $fillable =
-        [
-            'name',
-            'start_time',
-            'end_time',
-            'room_id'
-        ];
+    protected $fillable = [
+        'name',
+        'start_time',
+        'end_time',
+        'room_id'
+    ];
 
     public function room()
     {
@@ -32,8 +31,6 @@ class Shift extends Model
     {
         return $this->hasMany(CourseSchedule::class);
     }
-
-
 
     public function toSearchableArray()
     {

@@ -21,7 +21,7 @@ class DiscountRequest extends FormRequest
                 'required',
                 'string',
                 'max:100',
-                'regex:/^[a-zA-Z\s]+$/',
+                'regex:/^[a-zA-ZñÑáéíóúÁÉÍÓÚ\s]+$/',
             ],
             'percentage' => 'required|numeric|min:10|max:100',
         ];
